@@ -6,4 +6,3 @@ dist/
 .vscode/
 *.log
 /index.html
-build/
