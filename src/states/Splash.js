@@ -21,12 +21,13 @@ export default class extends Phaser.State {
     //
     // load your assets
     //
-    this.load.image(
-      "player",
-      "assets/survivor/knife/idle/survivor-idle_knife_0.png"
-    );
     this.load.image("tree00", "assets/trees/RE_00.png");
     this.load.image("ground", "assets/ground.png");
+    this.load.atlasJSONHash(
+      "player",
+      "assets/player.png",
+      "assets/player.json"
+    );
   }
 
   create() {

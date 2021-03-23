@@ -19,6 +19,16 @@ export default class extends Phaser.State {
       asset: "player",
     });
 
+    this.player.animations.add(
+      "move",
+      Phaser.Animation.generateFrameNames("survivor-move_knife_", 0, 19, ".png")
+    );
+    this.player.animations.add(
+      "idle",
+      Phaser.Animation.generateFrameNames("survivor-idle_knife_", 0, 19, ".png")
+    );
+    this.player.animations.play("idle", 60, true);
+
     game.add.tileSprite(0, 0, MAP_SIZE, MAP_SIZE, "ground");
 
     this.game.world.setBounds(0, 0, MAP_SIZE, MAP_SIZE);

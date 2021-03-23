@@ -44,8 +44,12 @@ export default class Player extends Phaser.Sprite {
       if (dist > 10) {
         this.body.velocity.x = moveX;
         this.body.velocity.y = moveY;
+
+        this.animations.play("move", 60, true);
       } else {
         this.destination = null;
+
+        this.animations.play("idle", 60, true);
       }
     }
   }
