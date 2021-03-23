@@ -5,10 +5,11 @@
     "author": "leandro cabrera <leandcabrera@gmail.com>",
     "main": "index.js",
     "scripts": {
-        "dev": "webpack",
-        "deploy": "webpack --config webpack.production.config.js",
+        "start": "webpack",
+        "build": "webpack --config webpack.production.config.js",
         "cordova": "webpack --config webpack.cordova.config.js",
-        "test": "eslint './src/**/*.js'"
+        "test": "eslint './src/**/*.js'",
+        "deploy": "git subtree push --prefix build origin gh-pages"
     },
     "license": "MIT",
     "devDependencies": {
