@@ -4,11 +4,26 @@ export default class Player extends Phaser.Sprite {
   constructor({ game, x, y, asset }) {
     super(game, x, y, asset);
 
+    this.logs = 0;
+
     this.destination = null;
     this.targetRotation = null;
 
+    this.targetTree = null;
+    this.woodcuttingTarget = null;
+
     this.scale.setTo(0.3);
     this.anchor.setTo(0.5);
+
+    this.animations.add(
+      "move",
+      Phaser.Animation.generateFrameNames("survivor-move_knife_", 0, 19, ".png")
+    );
+    this.animations.add(
+      "idle",
+      Phaser.Animation.generateFrameNames("survivor-idle_knife_", 0, 19, ".png")
+    );
+    this.animations.play("idle", 60, true);
   }
 
   update() {
@@ -27,6 +42,32 @@ export default class Player extends Phaser.Sprite {
       }
     }
 
+    if (this.woodcuttingTarget) {
+      if (Math.random() < 0.01) {
+        this.logs++;
+        this.woodcuttingTarget.logs--;
+
+        if (this.woodcuttingTarget.logs < 1) {
+          this.woodcuttingTarget = null;
+        }
+      }
+    }
+
+    if (this.targetTree) {
+      const dist = Phaser.Math.distance(
+        this.body.x,
+        this.body.y,
+        this.targetTree.x,
+        this.targetTree.y
+      );
+
+      if (dist < 100) {
+        this.woodcuttingTarget = this.targetTree;
+        this.destination = null;
+        this.targetTree = null;
+        this.animations.play("idle", 60, true);
+      }
+    }
     if (this.destination) {
       const dist = Phaser.Math.distance(
         this.body.x,

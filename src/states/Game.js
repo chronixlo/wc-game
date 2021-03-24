@@ -12,6 +12,8 @@ export default class extends Phaser.State {
   create() {
     this.game.physics.startSystem(Phaser.Physics.P2JS);
 
+    this.game.stage.disableVisibilityChange = true;
+
     this.player = new Player({
       game: this.game,
       x: MAP_SIZE / 2,
@@ -19,17 +21,7 @@ export default class extends Phaser.State {
       asset: "player",
     });
 
-    this.player.animations.add(
-      "move",
-      Phaser.Animation.generateFrameNames("survivor-move_knife_", 0, 19, ".png")
-    );
-    this.player.animations.add(
-      "idle",
-      Phaser.Animation.generateFrameNames("survivor-idle_knife_", 0, 19, ".png")
-    );
-    this.player.animations.play("idle", 60, true);
-
-    game.add.tileSprite(0, 0, MAP_SIZE, MAP_SIZE, "ground");
+    this.game.add.tileSprite(0, 0, MAP_SIZE, MAP_SIZE, "ground");
 
     this.game.world.setBounds(0, 0, MAP_SIZE, MAP_SIZE);
     this.game.physics.p2.enable(this.player);
@@ -43,16 +35,7 @@ export default class extends Phaser.State {
     this.trees.inputEnableChildren = true;
 
     this.trees.onChildInputDown.add((sprite) => {
-      const dist = Phaser.Math.distance(
-        this.player.body.x,
-        this.player.body.y,
-        sprite.x,
-        sprite.y
-      );
-
-      if (dist < 100) {
-        sprite.kill();
-      }
+      this.player.targetTree = sprite;
     });
 
     new Array(1000).fill().forEach(() => {
@@ -70,6 +53,20 @@ export default class extends Phaser.State {
     });
 
     this.game.add.existing(this.trees);
+
+    const style = {
+      font: "32px Arial",
+      fill: "#fff",
+      boundsAlignH: "center",
+      boundsAlignV: "middle",
+    };
+
+    this.text = this.game.add.text(100, 100, "woodcutting", style);
+    this.text.anchor.setTo(0.5);
+    this.text.fixedToCamera = true;
+    this.text.setShadow(3, 3, "rgba(0,0,0,0.5)", 2);
+
+    this.text.visible = false;
   }
 
   update() {
@@ -81,12 +78,15 @@ export default class extends Phaser.State {
       );
 
       this.player.destination = destination;
+      this.player.woodcuttingTarget = null;
 
       this.player.targetRotation = Phaser.Math.angleBetweenPoints(
         new Phaser.Point(this.player.body.x, this.player.body.y),
         destination
       );
     }
+
+    this.text.visible = !!this.player.woodcuttingTarget;
   }
 
   render() {}
