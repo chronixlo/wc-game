@@ -1,15 +1,18 @@
 import Phaser from "phaser";
+import Stone from "./Stone";
+import Tree from "./Tree";
 
 export default class Player extends Phaser.Sprite {
   constructor({ game, x, y, asset }) {
     super(game, x, y, asset);
 
     this.logs = 0;
+    this.stones = 0;
 
     this.destination = null;
     this.targetRotation = null;
 
-    this.targetTree = null;
+    this.targetResource = null;
     this.woodcuttingTarget = null;
 
     this.scale.setTo(0.3);
@@ -23,7 +26,16 @@ export default class Player extends Phaser.Sprite {
       "idle",
       Phaser.Animation.generateFrameNames("survivor-idle_knife_", 0, 19, ".png")
     );
-    this.animations.play("idle", 60, true);
+    this.animations.add(
+      "attack",
+      Phaser.Animation.generateFrameNames(
+        "survivor-meleeattack_knife_",
+        0,
+        14,
+        ".png"
+      )
+    );
+    this.animations.play("idle", 30, true);
   }
 
   update() {
@@ -43,29 +55,36 @@ export default class Player extends Phaser.Sprite {
     }
 
     if (this.woodcuttingTarget) {
-      if (Math.random() < 0.01) {
-        this.logs++;
-        this.woodcuttingTarget.logs--;
+      if (this.woodcuttingTarget instanceof Tree) {
+        if (Math.random() < 0.01) {
+          this.logs++;
+          this.woodcuttingTarget.logs--;
 
-        if (this.woodcuttingTarget.logs < 1) {
-          this.woodcuttingTarget = null;
+          if (this.woodcuttingTarget.logs < 1) {
+            this.woodcuttingTarget = null;
+            this.animations.play("idle", 30, true);
+          }
+        }
+      } else if (this.woodcuttingTarget instanceof Stone) {
+        if (Math.random() < 0.01) {
+          this.stones++;
         }
       }
     }
 
-    if (this.targetTree) {
+    if (this.targetResource) {
       const dist = Phaser.Math.distance(
         this.body.x,
         this.body.y,
-        this.targetTree.x,
-        this.targetTree.y
+        this.targetResource.x,
+        this.targetResource.y
       );
 
       if (dist < 100) {
-        this.woodcuttingTarget = this.targetTree;
+        this.woodcuttingTarget = this.targetResource;
         this.destination = null;
-        this.targetTree = null;
-        this.animations.play("idle", 60, true);
+        this.targetResource = null;
+        this.animations.play("attack", 30, true);
       }
     }
     if (this.destination) {
@@ -86,11 +105,11 @@ export default class Player extends Phaser.Sprite {
         this.body.velocity.x = moveX;
         this.body.velocity.y = moveY;
 
-        this.animations.play("move", 60, true);
+        this.animations.play("move", 30, true);
       } else {
         this.destination = null;
 
-        this.animations.play("idle", 60, true);
+        this.animations.play("idle", 30, true);
       }
     }
   }
