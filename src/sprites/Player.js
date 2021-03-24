@@ -13,7 +13,7 @@ export default class Player extends Phaser.Sprite {
     this.targetRotation = null;
 
     this.targetResource = null;
-    this.woodcuttingTarget = null;
+    this.destinationResource = null;
 
     this.scale.setTo(0.3);
     this.anchor.setTo(0.5);
@@ -54,63 +54,77 @@ export default class Player extends Phaser.Sprite {
       }
     }
 
-    if (this.woodcuttingTarget) {
-      if (this.woodcuttingTarget instanceof Tree) {
+    if (this.targetResource) {
+      if (this.targetResource instanceof Tree) {
         if (Math.random() < 0.01) {
           this.logs++;
-          this.woodcuttingTarget.logs--;
+          this.targetResource.logs--;
 
-          if (this.woodcuttingTarget.logs < 1) {
-            this.woodcuttingTarget = null;
+          if (this.targetResource.logs < 1) {
+            this.targetResource = null;
             this.animations.play("idle", 30, true);
           }
         }
-      } else if (this.woodcuttingTarget instanceof Stone) {
+      } else if (this.targetResource instanceof Stone) {
         if (Math.random() < 0.01) {
           this.stones++;
         }
       }
+      return;
     }
 
-    if (this.targetResource) {
+    if (this.destinationResource) {
       const dist = Phaser.Math.distance(
         this.body.x,
         this.body.y,
-        this.targetResource.x,
-        this.targetResource.y
+        this.destinationResource.x,
+        this.destinationResource.y
       );
 
       if (dist < 100) {
-        this.woodcuttingTarget = this.targetResource;
+        this.targetResource = this.destinationResource;
         this.destination = null;
-        this.targetResource = null;
+        this.destinationResource = null;
         this.animations.play("attack", 30, true);
+        return;
       }
     }
-    if (this.destination) {
-      const dist = Phaser.Math.distance(
-        this.body.x,
-        this.body.y,
-        this.destination.x,
-        this.destination.y
-      );
 
-      const deltaX = this.destination.x - this.body.x;
-      const deltaY = this.destination.y - this.body.y;
-
-      const moveX = (deltaX * 200) / dist;
-      const moveY = (deltaY * 200) / dist;
-
-      if (dist > 10) {
-        this.body.velocity.x = moveX;
-        this.body.velocity.y = moveY;
-
-        this.animations.play("move", 30, true);
-      } else {
-        this.destination = null;
-
-        this.animations.play("idle", 30, true);
-      }
+    if (!this.destination && !this.destinationResource) {
+      return;
     }
+
+    const destination = this.destinationResource
+      ? this.destinationResource.position
+      : this.destination;
+
+    const dist = Phaser.Math.distance(
+      this.body.x,
+      this.body.y,
+      destination.x,
+      destination.y
+    );
+
+    const deltaX = destination.x - this.body.x;
+    const deltaY = destination.y - this.body.y;
+
+    const moveX = (deltaX * 200) / dist;
+    const moveY = (deltaY * 200) / dist;
+
+    if (dist > 10) {
+      this.body.velocity.x = moveX;
+      this.body.velocity.y = moveY;
+
+      this.animations.play("move", 30, true);
+    } else {
+      this.destination = null;
+
+      this.animations.play("idle", 30, true);
+    }
+
+    this.targetRotation = Phaser.Math.angleBetweenPoints(
+      new Phaser.Point(this.body.x, this.body.y),
+      destination
+    );
   }
 }

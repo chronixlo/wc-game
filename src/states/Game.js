@@ -77,24 +77,28 @@ export default class extends Phaser.State {
       }
     );
     this.stoneText.fixedToCamera = true;
+
+    this.game.time.events.loop(
+      Phaser.Timer.SECOND * 10,
+      () => {
+        const tree = new Tree({
+          game: this.game,
+          x: Phaser.Math.between(0, MAP_SIZE),
+          y: Phaser.Math.between(0, MAP_SIZE),
+          asset: "tree00",
+        });
+
+        this.game.physics.p2.enable(tree);
+        tree.body.setCircle(50);
+        tree.body.static = true;
+        this.trees.add(tree);
+      },
+      this
+    );
   }
 
   update() {
-    const pointer = this.game.input.activePointer;
-    if (pointer.isDown) {
-      const destination = new Phaser.Point(
-        this.game.camera.x + pointer.clientX,
-        this.game.camera.y + pointer.clientY
-      );
-
-      this.player.destination = destination;
-      this.player.woodcuttingTarget = null;
-
-      this.player.targetRotation = Phaser.Math.angleBetweenPoints(
-        new Phaser.Point(this.player.body.x, this.player.body.y),
-        destination
-      );
-    }
+    this.handleInput();
 
     this.stoneText.setText(this.player.stones);
     this.logText.setText(this.player.logs);
@@ -102,7 +106,39 @@ export default class extends Phaser.State {
     this.updateDayCycle();
   }
 
-  render() {}
+  handleInput() {
+    const pointer = this.game.input.activePointer;
+    if (pointer.isDown) {
+      const trees = this.game.physics.p2.hitTest(
+        new Phaser.Point(pointer.worldX, pointer.worldY),
+        this.trees.children
+      );
+
+      if (trees.length) {
+        this.player.destinationResource = trees[0].parent.sprite;
+        return;
+      }
+
+      const stones = this.game.physics.p2.hitTest(
+        new Phaser.Point(pointer.worldX, pointer.worldY),
+        this.stones.children
+      );
+
+      if (stones.length) {
+        this.player.destinationResource = stones[0].parent.sprite;
+        return;
+      }
+
+      const destination = new Phaser.Point(
+        this.game.camera.x + pointer.clientX,
+        this.game.camera.y + pointer.clientY
+      );
+
+      this.player.destinationResource = null;
+      this.player.targetResource = null;
+      this.player.destination = destination;
+    }
+  }
 
   updateDayCycle() {
     let elapsed = this.game.time.totalElapsedSeconds() + HOUR_LENGTH * 12;
@@ -124,11 +160,6 @@ export default class extends Phaser.State {
 
   addStones() {
     this.stones = this.game.add.group();
-    this.stones.inputEnableChildren = true;
-
-    this.stones.onChildInputDown.add((sprite) => {
-      this.player.targetResource = sprite;
-    });
 
     new Array(1000).fill().forEach(() => {
       const stone = new Stone({
@@ -148,11 +179,6 @@ export default class extends Phaser.State {
 
   addTrees() {
     this.trees = this.game.add.group();
-    this.trees.inputEnableChildren = true;
-
-    this.trees.onChildInputDown.add((sprite) => {
-      this.player.targetResource = sprite;
-    });
 
     new Array(1000).fill().forEach(() => {
       const tree = new Tree({
@@ -163,7 +189,7 @@ export default class extends Phaser.State {
       });
 
       this.game.physics.p2.enable(tree);
-      tree.body.setCircle(30);
+      tree.body.setCircle(50);
       tree.body.static = true;
       this.trees.add(tree);
     });
