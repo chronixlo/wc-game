@@ -155,7 +155,7 @@ export default class extends Phaser.State {
 
     const alpha = hourDec === 0 ? 1 : Math.abs((hourDec - 12) % 12) / 12;
 
-    this.graphics.alpha = alpha * 0.8;
+    this.graphics.alpha = alpha * 0.5;
   }
 
   addStones() {
