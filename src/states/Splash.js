@@ -22,7 +22,11 @@ export default class extends Phaser.State {
     // load your assets
     //
     this.load.image("stone-icon", "assets/stone.png");
+    this.load.image("iron-icon", "assets/iron.png");
     this.load.image("log-icon", "assets/log.png");
+    this.load.image("axe-icon", "assets/axe.png");
+    this.load.image("pickaxe-icon", "assets/pickaxe.png");
+    this.load.image("inventory-icon", "assets/inventory.png");
     this.load.image("tree00", "assets/trees/RE_00.png");
     this.load.image("stone01", "assets/stones/SM_001.png");
     this.load.image("ground", "assets/ground.png");
