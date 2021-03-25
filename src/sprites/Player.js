@@ -6,8 +6,11 @@ export default class Player extends Phaser.Sprite {
   constructor({ game, x, y, asset }) {
     super(game, x, y, asset);
 
-    this.logs = 0;
-    this.stones = 0;
+    this.logs = 100;
+    this.stones = 100;
+
+    this.pickaxeTier = 1;
+    this.axeTier = 1;
 
     this.destination = null;
     this.targetRotation = null;
@@ -126,5 +129,24 @@ export default class Player extends Phaser.Sprite {
       new Phaser.Point(this.body.x, this.body.y),
       destination
     );
+  }
+
+  upgradePickaxe() {
+    if (
+      this.logs >= this.pickaxeTier * 10 &&
+      this.stones >= this.pickaxeTier * 20
+    ) {
+      this.logs -= this.pickaxeTier * 10;
+      this.stones -= this.pickaxeTier * 20;
+      this.pickaxeTier += 1;
+    }
+  }
+
+  upgradeAxe() {
+    if (this.logs >= this.axeTier * 10 && this.stones >= this.axeTier * 20) {
+      this.logs -= this.axeTier * 10;
+      this.stones -= this.axeTier * 20;
+      this.axeTier += 1;
+    }
   }
 }
