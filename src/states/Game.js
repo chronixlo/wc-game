@@ -156,10 +156,14 @@ export default class Game extends Phaser.State {
       this.inventory.visible = !this.inventory.visible;
     }, this);
 
-    const inventoryWidth = 200;
-    const inventoryHeight = 200;
+    const inventoryWidth = 300;
+    const inventoryHeight = 300;
     const inventoryX = this.game.width / 2 - inventoryWidth / 2;
     const inventoryY = this.game.height / 2 - inventoryHeight / 2;
+    this.inventoryWidth = inventoryWidth;
+    this.inventoryHeight = inventoryHeight;
+    this.inventoryX = inventoryX;
+    this.inventoryY = inventoryY;
 
     this.inventory = this.game.add.group();
     this.inventory.fixedToCamera = true;
@@ -174,179 +178,37 @@ export default class Game extends Phaser.State {
     this.inventoryBg.endFill();
     this.inventoryBg.alpha = 0.5;
     this.inventory.add(this.inventoryBg);
-    this.inventory.visible = false;
+    // this.inventory.visible = false;
 
-    const axeIcon = new Phaser.Image(
-      this.game,
-      inventoryX,
-      inventoryY,
-      "axe-icon"
+    // axe
+    this.addInventoryItem(
+      "axe-icon",
+      "axe",
+      iconSize,
+      margin,
+      () => {
+        this.player.upgradeAxe();
+        this.axeText.setText("Tier " + this.player.axeTier);
+        this.axeUpgradeLogText.setText(this.player.axeTier * 10);
+        this.axeUpgradeStoneText.setText(this.player.axeTier * 20);
+      },
+      0
     );
-    axeIcon.width = axeIcon.height = 50;
-    this.inventory.add(axeIcon);
 
-    this.axeText = new Phaser.Text(
-      this.game,
-      inventoryX + 50 + 5,
-      inventoryY + 15,
-      "Tier " + this.player.axeTier,
-      {
-        font: "20px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
+    // pickaxe
+    this.addInventoryItem(
+      "pickaxe-icon",
+      "pickaxe",
+      iconSize,
+      margin,
+      () => {
+        this.player.upgradeAxe();
+        this.pickaxeText.setText("Tier " + this.player.pickaxeTier);
+        this.pickaxeUpgradeLogText.setText(this.player.pickaxeTier * 10);
+        this.pickaxeUpgradeStoneText.setText(this.player.pickaxeTier * 20);
+      },
+      1
     );
-    this.inventory.add(this.axeText);
-
-    this.axeUpgradeText = new Phaser.Text(
-      this.game,
-      inventoryX + 5,
-      inventoryY + 50 + 15,
-      "Upgrade",
-      {
-        font: "20px monospace",
-        fill: "#44eeee",
-        align: "center",
-      }
-    );
-    this.axeUpgradeText.inputEnabled = true;
-    this.inventory.add(this.axeUpgradeText);
-    this.axeUpgradeText.events.onInputDown.add(() => {
-      this.player.upgradeAxe();
-      this.axeText.setText("Tier " + this.player.axeTier);
-      this.axeUpgradeLogText.setText(this.player.axeTier * 10);
-      this.axeUpgradeStoneText.setText(this.player.axeTier * 20);
-    }, this);
-
-    const axeUpgradeLogIcon = new Phaser.Image(
-      this.game,
-      inventoryX + 90 + 5,
-      inventoryY + 50 + 15,
-      "log-icon"
-    );
-    axeUpgradeLogIcon.width = axeUpgradeLogIcon.height = 20;
-    this.inventory.add(axeUpgradeLogIcon);
-
-    this.axeUpgradeLogText = new Phaser.Text(
-      this.game,
-      inventoryX + 90 + 20 + 5,
-      inventoryY + 50 + 15,
-      this.player.axeTier * 10,
-      {
-        font: "16px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
-    );
-    this.inventory.add(this.axeUpgradeLogText);
-
-    const axeUpgradeStoneIcon = new Phaser.Image(
-      this.game,
-      inventoryX + 90 + 50 + 5,
-      inventoryY + 50 + 15,
-      "stone-icon"
-    );
-    axeUpgradeStoneIcon.width = axeUpgradeStoneIcon.height = 20;
-    this.inventory.add(axeUpgradeStoneIcon);
-
-    this.axeUpgradeStoneText = new Phaser.Text(
-      this.game,
-      inventoryX + 90 + 50 + 20 + 5,
-      inventoryY + 50 + 15,
-      this.player.axeTier * 20,
-      {
-        font: "16px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
-    );
-    this.inventory.add(this.axeUpgradeStoneText);
-
-    const pickaxeIcon = new Phaser.Image(
-      this.game,
-      inventoryX,
-      inventoryY + 100,
-      "pickaxe-icon"
-    );
-    pickaxeIcon.width = pickaxeIcon.height = 50;
-    this.inventory.add(pickaxeIcon);
-
-    this.pickaxeText = new Phaser.Text(
-      this.game,
-      inventoryX + 50 + 5,
-      inventoryY + 100 + 15,
-      "Tier " + this.player.pickaxeTier,
-      {
-        font: "20px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
-    );
-    this.inventory.add(this.pickaxeText);
-
-    this.pickaxeUpgradeText = new Phaser.Text(
-      this.game,
-      inventoryX + 5,
-      inventoryY + 150 + 15,
-      "Upgrade",
-      {
-        font: "20px monospace",
-        fill: "#44eeee",
-        align: "center",
-      }
-    );
-    this.pickaxeUpgradeText.inputEnabled = true;
-    this.inventory.add(this.pickaxeUpgradeText);
-    this.pickaxeUpgradeText.events.onInputDown.add(() => {
-      this.player.upgradePickaxe();
-      this.pickaxeText.setText("Tier " + this.player.pickaxeTier);
-      this.pickaxeUpgradeLogText.setText(this.player.pickaxeTier * 10);
-      this.pickaxeUpgradeStoneText.setText(this.player.pickaxeTier * 20);
-    }, this);
-
-    const pickaxeUpgradeLogIcon = new Phaser.Image(
-      this.game,
-      inventoryX + 90 + 5,
-      inventoryY + 100 + 50 + 15,
-      "log-icon"
-    );
-    pickaxeUpgradeLogIcon.width = pickaxeUpgradeLogIcon.height = 20;
-    this.inventory.add(pickaxeUpgradeLogIcon);
-
-    this.pickaxeUpgradeLogText = new Phaser.Text(
-      this.game,
-      inventoryX + 90 + 20 + 5,
-      inventoryY + 100 + 50 + 15,
-      this.player.pickaxeTier * 10,
-      {
-        font: "16px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
-    );
-    this.inventory.add(this.pickaxeUpgradeLogText);
-
-    const pickaxeUpgradeStoneIcon = new Phaser.Image(
-      this.game,
-      inventoryX + 90 + 50 + 5,
-      inventoryY + 100 + 50 + 15,
-      "stone-icon"
-    );
-    pickaxeUpgradeStoneIcon.width = pickaxeUpgradeStoneIcon.height = 20;
-    this.inventory.add(pickaxeUpgradeStoneIcon);
-
-    this.pickaxeUpgradeStoneText = new Phaser.Text(
-      this.game,
-      inventoryX + 90 + 50 + 20 + 5,
-      inventoryY + 100 + 50 + 15,
-      this.player.pickaxeTier * 20,
-      {
-        font: "16px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
-    );
-    this.inventory.add(this.pickaxeUpgradeStoneText);
 
     // hud icons
     this.logText = this.addHudIcon("log-icon", iconSize, margin, 0);
@@ -382,6 +244,94 @@ export default class Game extends Phaser.State {
     this.game.add.existing(text);
 
     return text;
+  }
+
+  addInventoryItem(asset, name, size, margin, onInputDown, idx) {
+    const nth = idx + 1;
+    const icon = new Phaser.Image(
+      this.game,
+      this.inventoryX + margin,
+      this.inventoryY + size * idx * 2 + margin * nth,
+      asset
+    );
+    icon.width = icon.height = size;
+    this.inventory.add(icon);
+
+    const text = new Phaser.Text(
+      this.game,
+      this.inventoryX + size + margin * 2 + 5,
+      this.inventoryY + size * idx * 2 + margin * nth + 15,
+      "Tier " + this.player.axeTier,
+      {
+        font: "20px monospace",
+        fill: "#ffee44",
+        align: "center",
+      }
+    );
+    this.inventory.add(text);
+    this[name + "Text"] = text;
+
+    const upgradeText = new Phaser.Text(
+      this.game,
+      this.inventoryX + 5,
+      this.inventoryY + size + size * idx * 2 + margin * nth + 15,
+      "Upgrade",
+      {
+        font: "20px monospace",
+        fill: "#44eeee",
+        align: "center",
+      }
+    );
+    upgradeText.inputEnabled = true;
+    this.inventory.add(upgradeText);
+    upgradeText.events.onInputDown.add(onInputDown, this);
+    this[name + "UpgradeText"] = upgradeText;
+
+    const axeUpgradeLogIcon = new Phaser.Image(
+      this.game,
+      this.inventoryX + 100,
+      this.inventoryY + size + size * idx * 2 + margin * nth + 15,
+      "log-icon"
+    );
+    axeUpgradeLogIcon.width = axeUpgradeLogIcon.height = 20;
+    this.inventory.add(axeUpgradeLogIcon);
+
+    const axeUpgradeLogText = new Phaser.Text(
+      this.game,
+      this.inventoryX + 100 + 20 + 5,
+      this.inventoryY + size + size * idx * 2 + margin * nth + 15,
+      this.player[name + "Tier"] * 10,
+      {
+        font: "16px monospace",
+        fill: "#ffee44",
+        align: "center",
+      }
+    );
+    this.inventory.add(axeUpgradeLogText);
+    this[name + "UpgradeLogText"] = axeUpgradeLogText;
+
+    const axeUpgradeStoneIcon = new Phaser.Image(
+      this.game,
+      this.inventoryX + 100 + 20 + 40,
+      this.inventoryY + size + size * idx * 2 + margin * nth + 15,
+      "stone-icon"
+    );
+    axeUpgradeStoneIcon.width = axeUpgradeStoneIcon.height = 20;
+    this.inventory.add(axeUpgradeStoneIcon);
+
+    const axeUpgradeStoneText = new Phaser.Text(
+      this.game,
+      this.inventoryX + 100 + 20 + 40 + 20 + 5,
+      this.inventoryY + size + size * idx * 2 + margin * nth + 15,
+      this.player[name + "Tier"] * 20,
+      {
+        font: "16px monospace",
+        fill: "#ffee44",
+        align: "center",
+      }
+    );
+    this.inventory.add(axeUpgradeStoneText);
+    this[name + "UpgradeStoneText"] = axeUpgradeStoneText;
   }
 }
 
