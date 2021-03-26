@@ -42,19 +42,16 @@ export default class Game extends Phaser.State {
       );
 
       if (stones.length) {
-        this.player.targetResource = null;
-        this.player.destinationResource = stones[0].parent.sprite;
+        this.player.harvestResource(stones[0].parent.sprite);
         return;
       }
 
-      const destination = new Phaser.Point(
-        this.game.camera.x + pointer.clientX,
-        this.game.camera.y + pointer.clientY
+      this.player.moveTo(
+        new Phaser.Point(
+          this.game.camera.x + pointer.clientX,
+          this.game.camera.y + pointer.clientY
+        )
       );
-
-      this.player.destinationResource = null;
-      this.player.targetResource = null;
-      this.player.destination = destination;
     }
   }
 
@@ -64,7 +61,7 @@ export default class Game extends Phaser.State {
     this.dayCycleOverlay.beginFill(0x000000);
     this.dayCycleOverlay.drawRect(0, 0, this.game.width, this.game.height);
     this.dayCycleOverlay.endFill();
-    this.dayCycleOverlay.alpha = this.game.cave ? 0.5 : 0;
+    this.dayCycleOverlay.alpha = this.game.cave ? 0.3 : 0;
   }
 
   updateDayCycle() {
@@ -133,18 +130,18 @@ export default class Game extends Phaser.State {
 
   initUI() {
     this.dayText = this.game.add.text(0, 0, "", {
-      font: "20px Arial",
+      font: "20px monospace",
       fill: "#ffffff",
     });
     this.dayText.fixedToCamera = true;
 
     const inventoryIcon = new Phaser.Image(
       this.game,
-      this.game.width - 50,
-      this.game.height - 50,
+      this.game.width - 80,
+      this.game.height - 80,
       "inventory-icon"
     );
-    inventoryIcon.width = inventoryIcon.height = 50;
+    inventoryIcon.width = inventoryIcon.height = 80;
     inventoryIcon.fixedToCamera = true;
     inventoryIcon.inputEnabled = true;
     this.game.add.existing(inventoryIcon);
@@ -188,7 +185,7 @@ export default class Game extends Phaser.State {
       inventoryY + 15,
       "Tier " + this.player.axeTier,
       {
-        font: "20px Arial",
+        font: "20px monospace",
         fill: "#ffee44",
         align: "center",
       }
@@ -201,7 +198,7 @@ export default class Game extends Phaser.State {
       inventoryY + 50 + 15,
       "Upgrade",
       {
-        font: "20px Arial",
+        font: "20px monospace",
         fill: "#44eeee",
         align: "center",
       }
@@ -230,7 +227,7 @@ export default class Game extends Phaser.State {
       inventoryY + 50 + 15,
       this.player.axeTier * 10,
       {
-        font: "16px Arial",
+        font: "16px monospace",
         fill: "#ffee44",
         align: "center",
       }
@@ -252,7 +249,7 @@ export default class Game extends Phaser.State {
       inventoryY + 50 + 15,
       this.player.axeTier * 20,
       {
-        font: "16px Arial",
+        font: "16px monospace",
         fill: "#ffee44",
         align: "center",
       }
@@ -274,7 +271,7 @@ export default class Game extends Phaser.State {
       inventoryY + 100 + 15,
       "Tier " + this.player.pickaxeTier,
       {
-        font: "20px Arial",
+        font: "20px monospace",
         fill: "#ffee44",
         align: "center",
       }
@@ -287,7 +284,7 @@ export default class Game extends Phaser.State {
       inventoryY + 150 + 15,
       "Upgrade",
       {
-        font: "20px Arial",
+        font: "20px monospace",
         fill: "#44eeee",
         align: "center",
       }
@@ -316,7 +313,7 @@ export default class Game extends Phaser.State {
       inventoryY + 100 + 50 + 15,
       this.player.pickaxeTier * 10,
       {
-        font: "16px Arial",
+        font: "16px monospace",
         fill: "#ffee44",
         align: "center",
       }
@@ -338,7 +335,7 @@ export default class Game extends Phaser.State {
       inventoryY + 100 + 50 + 15,
       this.player.pickaxeTier * 20,
       {
-        font: "16px Arial",
+        font: "16px monospace",
         fill: "#ffee44",
         align: "center",
       }
@@ -361,7 +358,7 @@ export default class Game extends Phaser.State {
       this.game.height - 50 + 15,
       "0",
       {
-        font: "20px Arial",
+        font: "20px monospace",
         fill: "#ffee44",
         align: "center",
       }
@@ -385,7 +382,7 @@ export default class Game extends Phaser.State {
       this.game.height - 50 - 50 + 15,
       "0",
       {
-        font: "20px Arial",
+        font: "20px monospace",
         fill: "#ffee44",
         align: "center",
       }

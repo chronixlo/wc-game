@@ -2,6 +2,10 @@ import Phaser from "phaser";
 import Stone from "./Stone";
 import Tree from "./Tree";
 
+const HARVEST_INTERVAL = 0.2;
+const BASE_WC_CHANCE = 0.2;
+const BASE_MINING_CHANCE = 0.2;
+
 export default class Player extends Phaser.Sprite {
   constructor({ game, x, y, asset }) {
     super(game, x, y, asset);
@@ -17,6 +21,8 @@ export default class Player extends Phaser.Sprite {
 
     this.targetResource = null;
     this.destinationResource = null;
+
+    this.nextHarvest = null;
 
     this.scale.setTo(0.3);
     this.anchor.setTo(0.5);
@@ -58,8 +64,16 @@ export default class Player extends Phaser.Sprite {
     }
 
     if (this.targetResource) {
+      const elapsed = this.game.time.totalElapsedSeconds();
+
+      if (elapsed < this.nextHarvest) {
+        return;
+      }
+
+      const roll = Math.random();
+
       if (this.targetResource instanceof Tree) {
-        if (Math.random() < 0.01) {
+        if (roll < BASE_WC_CHANCE + 0.08 * (this.axeTier - 1)) {
           this.logs++;
           this.targetResource.logs--;
 
@@ -69,10 +83,12 @@ export default class Player extends Phaser.Sprite {
           }
         }
       } else if (this.targetResource instanceof Stone) {
-        if (Math.random() < 0.01) {
+        if (roll < BASE_MINING_CHANCE + 0.08 * (this.pickaxeTier - 1)) {
           this.stones++;
         }
       }
+
+      this.nextHarvest = elapsed + HARVEST_INTERVAL;
       return;
     }
 
@@ -86,6 +102,8 @@ export default class Player extends Phaser.Sprite {
 
       if (dist < 100) {
         this.targetResource = this.destinationResource;
+        this.nextHarvest =
+          this.game.time.totalElapsedSeconds() + HARVEST_INTERVAL;
         this.destination = null;
         this.destinationResource = null;
         this.animations.play("attack", 30, true);
@@ -129,6 +147,24 @@ export default class Player extends Phaser.Sprite {
       new Phaser.Point(this.body.x, this.body.y),
       destination
     );
+  }
+
+  harvestResource(resource) {
+    if (resource === this.targetResource) {
+      return;
+    }
+    this.targetRotation = Phaser.Math.angleBetweenPoints(
+      new Phaser.Point(this.body.x, this.body.y),
+      resource.position
+    );
+    this.targetResource = null;
+    this.destinationResource = resource;
+  }
+
+  moveTo(point) {
+    this.destinationResource = null;
+    this.targetResource = null;
+    this.destination = point;
   }
 
   upgradePickaxe() {

@@ -24,7 +24,7 @@ export default class extends Phaser.State {
       this.world.centerX,
       this.world.centerY,
       "loading fonts",
-      { font: "16px Arial", fill: "#dddddd", align: "center" }
+      { font: "16px monospace", fill: "#dddddd", align: "center" }
     );
     text.anchor.setTo(0.5, 0.5);
 

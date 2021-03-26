@@ -40,6 +40,7 @@ export default class Outdoors extends Game {
           x: Phaser.Math.between(0, this.map.width),
           y: Phaser.Math.between(0, this.map.height),
           asset: "tree00",
+          logs: Phaser.Math.between(50, 150),
         });
 
         this.game.physics.p2.enable(tree);
@@ -84,8 +85,7 @@ export default class Outdoors extends Game {
     );
 
     if (trees.length) {
-      this.player.targetResource = null;
-      this.player.destinationResource = trees[0].parent.sprite;
+      this.player.harvestResource(trees[0].parent.sprite);
       return true;
     }
   }
@@ -115,6 +115,7 @@ export default class Outdoors extends Game {
         x: tree.x,
         y: tree.y,
         asset: tree.asset,
+        logs: tree.logs,
       });
 
       this.game.physics.p2.enable(t);

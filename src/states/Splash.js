@@ -118,6 +118,7 @@ export default class extends Phaser.State {
       y: Phaser.Math.between(0, MAP_SIZE),
       asset: "tree00",
       body: 50,
+      logs: Phaser.Math.between(50, 150),
     }));
   }
 }

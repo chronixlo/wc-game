@@ -1,10 +1,10 @@
 import Phaser from "phaser";
 
 export default class Tree extends Phaser.Sprite {
-  constructor({ game, x, y, asset }) {
+  constructor({ game, x, y, asset, logs }) {
     super(game, x, y, asset);
 
-    this.logs = Phaser.Math.between(5, 15);
+    this.logs = logs;
 
     this.anchor.setTo(0.5);
   }
