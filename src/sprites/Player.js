@@ -5,13 +5,17 @@ import Tree from "./Tree";
 const HARVEST_INTERVAL = 0.2;
 const BASE_WC_CHANCE = 0.2;
 const BASE_MINING_CHANCE = 0.2;
+const IRON_MULTIPLIER = 0.5;
+const GEM_MULTIPLIER = 0.1;
 
 export default class Player extends Phaser.Sprite {
   constructor({ game, x, y, asset }) {
     super(game, x, y, asset);
 
-    this.logs = 100;
-    this.stones = 100;
+    this.logs = 0;
+    this.stones = 0;
+    this.iron = 0;
+    this.gems = 0;
 
     this.pickaxeTier = 1;
     this.axeTier = 1;
@@ -73,7 +77,8 @@ export default class Player extends Phaser.Sprite {
       const roll = Math.random();
 
       if (this.targetResource instanceof Tree) {
-        if (roll < BASE_WC_CHANCE + 0.08 * (this.axeTier - 1)) {
+        const wcChance = BASE_WC_CHANCE + 0.08 * (this.axeTier - 1);
+        if (roll < wcChance) {
           this.logs++;
           this.targetResource.logs--;
 
@@ -83,7 +88,14 @@ export default class Player extends Phaser.Sprite {
           }
         }
       } else if (this.targetResource instanceof Stone) {
-        if (roll < BASE_MINING_CHANCE + 0.08 * (this.pickaxeTier - 1)) {
+        const miningChance = BASE_MINING_CHANCE + 0.08 * (this.pickaxeTier - 1);
+        if (roll < miningChance) {
+          if (roll < miningChance * GEM_MULTIPLIER) {
+            this.gems++;
+          }
+          if (roll < miningChance * IRON_MULTIPLIER) {
+            this.iron++;
+          }
           this.stones++;
         }
       }

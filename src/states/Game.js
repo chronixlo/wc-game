@@ -19,6 +19,8 @@ export default class Game extends Phaser.State {
 
     this.stoneText.setText(this.player.stones);
     this.logText.setText(this.player.logs);
+    this.gemText.setText(this.player.gems);
+    this.ironText.setText(this.player.iron);
 
     this.updateDayCycle();
   }
@@ -389,6 +391,54 @@ export default class Game extends Phaser.State {
     );
     this.stoneText.fixedToCamera = true;
     this.game.add.existing(this.stoneText);
+
+    const ironIcon = new Phaser.Image(
+      this.game,
+      0,
+      this.game.height - 50 - 50 - 50,
+      "iron-icon"
+    );
+    ironIcon.width = ironIcon.height = 50;
+    ironIcon.fixedToCamera = true;
+    this.game.add.existing(ironIcon);
+
+    this.ironText = new Phaser.Text(
+      this.game,
+      50 + 5,
+      this.game.height - 50 - 50 - 50 + 15,
+      "0",
+      {
+        font: "20px monospace",
+        fill: "#ffee44",
+        align: "center",
+      }
+    );
+    this.ironText.fixedToCamera = true;
+    this.game.add.existing(this.ironText);
+
+    const gemIcon = new Phaser.Image(
+      this.game,
+      0,
+      this.game.height - 50 - 50 - 50 - 50,
+      "gem-icon"
+    );
+    gemIcon.width = gemIcon.height = 50;
+    gemIcon.fixedToCamera = true;
+    this.game.add.existing(gemIcon);
+
+    this.gemText = new Phaser.Text(
+      this.game,
+      50 + 5,
+      this.game.height - 50 - 50 - 50 - 50 + 15,
+      "0",
+      {
+        font: "20px monospace",
+        fill: "#ffee44",
+        align: "center",
+      }
+    );
+    this.gemText.fixedToCamera = true;
+    this.game.add.existing(this.gemText);
   }
 }
 
