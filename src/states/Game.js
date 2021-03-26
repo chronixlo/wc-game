@@ -1,10 +1,6 @@
-/* globals __DEV__ */
 import Phaser from "phaser";
 import Player from "../sprites/Player";
 import Stone from "../sprites/Stone";
-import Tree from "../sprites/Tree";
-
-const MAP_SIZE = 10000;
 
 const DAY_LENGTH = 120;
 const HOUR_LENGTH = DAY_LENGTH / 24;
@@ -16,43 +12,6 @@ export default class Game extends Phaser.State {
 
   create() {
     this.game.physics.startSystem(Phaser.Physics.P2JS);
-
-    this.game.stage.disableVisibilityChange = true;
-
-    this.game.add.tileSprite(0, 0, MAP_SIZE, MAP_SIZE, "ground");
-    this.game.world.setBounds(0, 0, MAP_SIZE, MAP_SIZE);
-
-    this.addStones();
-    this.addPlayer();
-    this.addTrees();
-
-    this.graphics = this.game.add.graphics(0, 0);
-    this.graphics.fixedToCamera = true;
-    this.graphics.beginFill(0x000000);
-    this.graphics.drawRect(0, 0, this.game.width, this.game.height);
-    this.graphics.endFill();
-    this.graphics.alpha = 0;
-
-    this.initUI();
-
-    // tree spawner
-    this.game.time.events.loop(
-      Phaser.Timer.SECOND * 10,
-      () => {
-        const tree = new Tree({
-          game: this.game,
-          x: Phaser.Math.between(0, MAP_SIZE),
-          y: Phaser.Math.between(0, MAP_SIZE),
-          asset: "tree00",
-        });
-
-        this.game.physics.p2.enable(tree);
-        tree.body.setCircle(50);
-        tree.body.static = true;
-        this.trees.add(tree);
-      },
-      this
-    );
   }
 
   update() {
@@ -70,24 +29,11 @@ export default class Game extends Phaser.State {
     }
     const pointer = this.game.input.activePointer;
     if (pointer.isDown) {
-      const trees = this.game.physics.p2.hitTest(
-        new Phaser.Point(pointer.worldX, pointer.worldY),
-        this.trees.children
-      );
-
-      if (trees.length) {
-        this.player.destinationResource = trees[0].parent.sprite;
-        return;
-      }
-
-      const stones = this.game.physics.p2.hitTest(
-        new Phaser.Point(pointer.worldX, pointer.worldY),
-        this.stones.children
-      );
-
-      if (stones.length) {
-        this.player.destinationResource = stones[0].parent.sprite;
-        return;
+      if (this.beforeMove) {
+        const stop = this.beforeMove(pointer);
+        if (stop) {
+          return;
+        }
       }
 
       const destination = new Phaser.Point(
@@ -101,6 +47,15 @@ export default class Game extends Phaser.State {
     }
   }
 
+  initDayCycle() {
+    this.dayCycleOverlay = this.game.add.graphics(0, 0);
+    this.dayCycleOverlay.fixedToCamera = true;
+    this.dayCycleOverlay.beginFill(0x000000);
+    this.dayCycleOverlay.drawRect(0, 0, this.game.width, this.game.height);
+    this.dayCycleOverlay.endFill();
+    this.dayCycleOverlay.alpha = this.game.cave ? 0.5 : 0;
+  }
+
   updateDayCycle() {
     let elapsed = this.game.time.totalElapsedSeconds() + HOUR_LENGTH * 12;
     const day = Math.floor(elapsed / DAY_LENGTH);
@@ -112,64 +67,57 @@ export default class Game extends Phaser.State {
         Math.floor(elapsed / MIN_LENGTH)
       )}`
     );
-    const hourDec = hour + elapsed / MIN_LENGTH / 60;
 
-    const alpha = hourDec === 0 ? 1 : Math.abs((hourDec - 12) % 12) / 12;
+    if (this.game.state.current === "Outdoors") {
+      const hourDec = hour + elapsed / MIN_LENGTH / 60;
+      const alpha = hourDec === 0 ? 1 : Math.abs((hourDec - 12) % 12) / 12;
 
-    this.graphics.alpha = alpha * 0.5;
+      this.dayCycleOverlay.alpha = alpha * 0.5;
+    }
   }
 
-  addStones() {
-    this.stones = this.game.add.group();
-
-    new Array(1000).fill().forEach(() => {
-      const stone = new Stone({
-        game: this.game,
-        x: Phaser.Math.between(0, MAP_SIZE),
-        y: Phaser.Math.between(0, MAP_SIZE),
-        asset: "stone01",
-      });
-
-      this.game.physics.p2.enable(stone);
-      stone.body.setCircle(30);
-      stone.body.static = true;
-      this.stones.add(stone);
-    });
-    this.game.add.existing(this.stones);
-  }
-
-  addTrees() {
-    this.trees = this.game.add.group();
-
-    new Array(1000).fill().forEach(() => {
-      const tree = new Tree({
-        game: this.game,
-        x: Phaser.Math.between(0, MAP_SIZE),
-        y: Phaser.Math.between(0, MAP_SIZE),
-        asset: "tree00",
-      });
-
-      this.game.physics.p2.enable(tree);
-      tree.body.setCircle(50);
-      tree.body.static = true;
-      this.trees.add(tree);
-    });
-    this.game.add.existing(this.trees);
-  }
-
-  addPlayer() {
+  addPlayer(coords) {
     this.player = new Player({
       game: this.game,
-      x: MAP_SIZE / 2,
-      y: MAP_SIZE / 2,
+      x: coords ? coords.x : this.map.width / 2,
+      y: coords ? coords.y : this.map.height / 2,
       asset: "player",
     });
     this.game.physics.p2.enable(this.player);
     this.game.camera.follow(this.player);
+    this.game.camera.bounds = null;
     this.player.body.collideWorldBounds = false;
     this.player.body.setCircle(30);
 
     this.game.add.existing(this.player);
+  }
+
+  addStones() {
+    const state = this.game.state.current;
+    let stones;
+
+    if (state === "Outdoors") {
+      stones = this.game.stones;
+    } else if (state === "Cave") {
+      stones = this.game.cave.stones;
+    }
+
+    this.stones = this.game.add.group();
+
+    stones.forEach((stone) => {
+      const s = new Stone({
+        game: this.game,
+        x: stone.x,
+        y: stone.y,
+        asset: stone.asset,
+      });
+
+      this.game.physics.p2.enable(s);
+      s.body.setCircle(stone.body);
+      s.body.static = true;
+      this.stones.add(s);
+    });
+    this.game.add.existing(this.stones);
   }
 
   initUI() {
@@ -212,7 +160,7 @@ export default class Game extends Phaser.State {
     this.inventoryBg.endFill();
     this.inventoryBg.alpha = 0.5;
     this.inventory.add(this.inventoryBg);
-    // this.inventory.visible = false;
+    this.inventory.visible = false;
 
     const axeIcon = new Phaser.Image(
       this.game,
