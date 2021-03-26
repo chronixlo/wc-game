@@ -5,8 +5,8 @@ import Tree from "./Tree";
 const HARVEST_INTERVAL = 0.2;
 const BASE_WC_CHANCE = 0.2;
 const BASE_MINING_CHANCE = 0.2;
-const IRON_MULTIPLIER = 0.5;
-const GEM_MULTIPLIER = 0.1;
+const IRON_MULTIPLIER = 0.2;
+const GEM_MULTIPLIER = 0.03;
 
 export default class Player extends Phaser.Sprite {
   constructor({ game, x, y, asset }) {

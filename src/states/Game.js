@@ -131,19 +131,23 @@ export default class Game extends Phaser.State {
   }
 
   initUI() {
-    this.dayText = this.game.add.text(0, 0, "", {
+    this.dayText = this.game.add.text(8, 8, "", {
       font: "20px monospace",
       fill: "#ffffff",
     });
     this.dayText.fixedToCamera = true;
 
+    const margin = 8;
+    const inventoryIconSize = 64;
+    const iconSize = 48;
+
     const inventoryIcon = new Phaser.Image(
       this.game,
-      this.game.width - 80,
-      this.game.height - 80,
+      this.game.width - inventoryIconSize - margin,
+      this.game.height - inventoryIconSize - margin,
       "inventory-icon"
     );
-    inventoryIcon.width = inventoryIcon.height = 80;
+    inventoryIcon.width = inventoryIcon.height = inventoryIconSize;
     inventoryIcon.fixedToCamera = true;
     inventoryIcon.inputEnabled = true;
     this.game.add.existing(inventoryIcon);
@@ -344,20 +348,29 @@ export default class Game extends Phaser.State {
     );
     this.inventory.add(this.pickaxeUpgradeStoneText);
 
-    const logIcon = new Phaser.Image(
-      this.game,
-      0,
-      this.game.height - 50,
-      "log-icon"
-    );
-    logIcon.width = logIcon.height = 50;
-    logIcon.fixedToCamera = true;
-    this.game.add.existing(logIcon);
+    // hud icons
+    this.logText = this.addHudIcon("log-icon", iconSize, margin, 0);
+    this.stoneText = this.addHudIcon("stone-icon", iconSize, margin, 1);
+    this.ironText = this.addHudIcon("iron-icon", iconSize, margin, 2);
+    this.gemText = this.addHudIcon("gem-icon", iconSize, margin, 3);
+  }
 
-    this.logText = new Phaser.Text(
+  addHudIcon(asset, size, margin, idx) {
+    const nth = idx;
+    const icon = new Phaser.Image(
       this.game,
-      50 + 5,
-      this.game.height - 50 + 15,
+      margin + size * nth + margin * nth,
+      this.game.height - size - margin - 8,
+      asset
+    );
+    icon.width = icon.height = size;
+    icon.fixedToCamera = true;
+    this.game.add.existing(icon);
+
+    const text = new Phaser.Text(
+      this.game,
+      margin + size * nth + margin * nth,
+      this.game.height - size - margin - 8,
       "0",
       {
         font: "20px monospace",
@@ -365,80 +378,10 @@ export default class Game extends Phaser.State {
         align: "center",
       }
     );
-    this.logText.fixedToCamera = true;
-    this.game.add.existing(this.logText);
+    text.fixedToCamera = true;
+    this.game.add.existing(text);
 
-    const stoneIcon = new Phaser.Image(
-      this.game,
-      0,
-      this.game.height - 50 - 50,
-      "stone-icon"
-    );
-    stoneIcon.width = stoneIcon.height = 50;
-    stoneIcon.fixedToCamera = true;
-    this.game.add.existing(stoneIcon);
-
-    this.stoneText = new Phaser.Text(
-      this.game,
-      50 + 5,
-      this.game.height - 50 - 50 + 15,
-      "0",
-      {
-        font: "20px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
-    );
-    this.stoneText.fixedToCamera = true;
-    this.game.add.existing(this.stoneText);
-
-    const ironIcon = new Phaser.Image(
-      this.game,
-      0,
-      this.game.height - 50 - 50 - 50,
-      "iron-icon"
-    );
-    ironIcon.width = ironIcon.height = 50;
-    ironIcon.fixedToCamera = true;
-    this.game.add.existing(ironIcon);
-
-    this.ironText = new Phaser.Text(
-      this.game,
-      50 + 5,
-      this.game.height - 50 - 50 - 50 + 15,
-      "0",
-      {
-        font: "20px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
-    );
-    this.ironText.fixedToCamera = true;
-    this.game.add.existing(this.ironText);
-
-    const gemIcon = new Phaser.Image(
-      this.game,
-      0,
-      this.game.height - 50 - 50 - 50 - 50,
-      "gem-icon"
-    );
-    gemIcon.width = gemIcon.height = 50;
-    gemIcon.fixedToCamera = true;
-    this.game.add.existing(gemIcon);
-
-    this.gemText = new Phaser.Text(
-      this.game,
-      50 + 5,
-      this.game.height - 50 - 50 - 50 - 50 + 15,
-      "0",
-      {
-        font: "20px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
-    );
-    this.gemText.fixedToCamera = true;
-    this.game.add.existing(this.gemText);
+    return text;
   }
 }
 
