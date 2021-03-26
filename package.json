@@ -9,7 +9,8 @@
         "build": "webpack --config webpack.production.config.js",
         "cordova": "webpack --config webpack.cordova.config.js",
         "test": "eslint './src/**/*.js'",
-        "deploy": "git subtree push --prefix build origin gh-pages"
+        "deploy": "git subtree push --prefix build origin gh-pages",
+        "build-deploy": "npm run build; git commit -m \"Update build\"; git push origin master; npm run deploy"
     },
     "license": "MIT",
     "devDependencies": {

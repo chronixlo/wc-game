@@ -36,6 +36,17 @@ export default class Game extends Phaser.State {
         }
       }
 
+      const stones = this.game.physics.p2.hitTest(
+        new Phaser.Point(pointer.worldX, pointer.worldY),
+        this.stones.children
+      );
+
+      if (stones.length) {
+        this.player.targetResource = null;
+        this.player.destinationResource = stones[0].parent.sprite;
+        return;
+      }
+
       const destination = new Phaser.Point(
         this.game.camera.x + pointer.clientX,
         this.game.camera.y + pointer.clientY

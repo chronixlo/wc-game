@@ -84,17 +84,8 @@ export default class Outdoors extends Game {
     );
 
     if (trees.length) {
+      this.player.targetResource = null;
       this.player.destinationResource = trees[0].parent.sprite;
-      return true;
-    }
-
-    const stones = this.game.physics.p2.hitTest(
-      new Phaser.Point(pointer.worldX, pointer.worldY),
-      this.stones.children
-    );
-
-    if (stones.length) {
-      this.player.destinationResource = stones[0].parent.sprite;
       return true;
     }
   }
