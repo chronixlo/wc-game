@@ -33,7 +33,7 @@ export default class Outdoors extends Game {
 
     // tree spawner
     this.game.time.events.loop(
-      Phaser.Timer.SECOND * 10,
+      Phaser.Timer.SECOND * 60,
       () => {
         const tree = new Tree({
           game: this.game,

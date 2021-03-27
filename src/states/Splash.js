@@ -70,70 +70,76 @@ export default class extends Phaser.State {
   }
 
   generateCaves() {
-    this.game.caves = new Array(100).fill().map(() => {
-      const entranceX = Phaser.Math.between(
-        SPRITE_WIDTH / 2,
-        MAP_SIZE - SPRITE_WIDTH / 2
-      );
-      const entranceY = Phaser.Math.between(
-        SPRITE_HEIGHT / 2,
-        MAP_SIZE - SPRITE_HEIGHT / 2
-      );
+    this.game.caves = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 1000000))
+      .fill()
+      .map(() => {
+        const entranceX = Phaser.Math.between(
+          SPRITE_WIDTH / 2,
+          MAP_SIZE - SPRITE_WIDTH / 2
+        );
+        const entranceY = Phaser.Math.between(
+          SPRITE_HEIGHT / 2,
+          MAP_SIZE - SPRITE_HEIGHT / 2
+        );
 
-      const caveWidth = Phaser.Math.between(600, 2000);
-      const caveHeight = Phaser.Math.between(600, 2000);
+        const caveWidth = Phaser.Math.between(600, 2000);
+        const caveHeight = Phaser.Math.between(600, 2000);
 
-      const exitX = Phaser.Math.between(
-        SPRITE_WIDTH / 2,
-        caveWidth - SPRITE_WIDTH / 2
-      );
+        const exitX = Phaser.Math.between(
+          SPRITE_WIDTH / 2,
+          caveWidth - SPRITE_WIDTH / 2
+        );
 
-      const exitY = Phaser.Math.between(
-        SPRITE_HEIGHT / 2,
-        caveHeight - SPRITE_HEIGHT / 2
-      );
+        const exitY = Phaser.Math.between(
+          SPRITE_HEIGHT / 2,
+          caveHeight - SPRITE_HEIGHT / 2
+        );
 
-      const stones = new Array(Math.round((caveWidth * caveHeight) / 100000))
-        .fill()
-        .map(() => ({
-          x: Phaser.Math.between(0, caveWidth),
-          y: Phaser.Math.between(0, caveHeight),
-          asset: "stone01",
-          body: 30,
-        }));
+        const stones = new Array(Math.round((caveWidth * caveHeight) / 100000))
+          .fill()
+          .map(() => ({
+            x: Phaser.Math.between(0, caveWidth),
+            y: Phaser.Math.between(0, caveHeight),
+            asset: "stone01",
+            body: 30,
+          }));
 
-      return {
-        stones,
-        width: caveWidth,
-        height: caveHeight,
-        exit: {
-          x: exitX,
-          y: exitY,
-        },
-        entrance: {
-          x: entranceX,
-          y: entranceY,
-        },
-      };
-    });
+        return {
+          stones,
+          width: caveWidth,
+          height: caveHeight,
+          exit: {
+            x: exitX,
+            y: exitY,
+          },
+          entrance: {
+            x: entranceX,
+            y: entranceY,
+          },
+        };
+      });
   }
 
   generateStones() {
-    this.game.stones = new Array(1000).fill().map(() => ({
-      x: Phaser.Math.between(0, MAP_SIZE),
-      y: Phaser.Math.between(0, MAP_SIZE),
-      asset: "stone01",
-      body: 30,
-    }));
+    this.game.stones = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 100000))
+      .fill()
+      .map(() => ({
+        x: Phaser.Math.between(0, MAP_SIZE),
+        y: Phaser.Math.between(0, MAP_SIZE),
+        asset: "stone01",
+        body: 30,
+      }));
   }
 
   generateTrees() {
-    this.game.trees = new Array(1000).fill().map(() => ({
-      x: Phaser.Math.between(0, MAP_SIZE),
-      y: Phaser.Math.between(0, MAP_SIZE),
-      asset: "tree00",
-      body: 50,
-      logs: Phaser.Math.between(50, 150),
-    }));
+    this.game.trees = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 100000))
+      .fill()
+      .map(() => ({
+        x: Phaser.Math.between(0, MAP_SIZE),
+        y: Phaser.Math.between(0, MAP_SIZE),
+        asset: "tree00",
+        body: 50,
+        logs: Phaser.Math.between(50, 150),
+      }));
   }
 }
