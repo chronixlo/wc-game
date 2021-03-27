@@ -1,6 +1,7 @@
 import Phaser from "phaser";
-import { centerGameObjects } from "../utils";
+import { centerGameObjects, zeroPad } from "../utils";
 import { SPRITE_HEIGHT, SPRITE_WIDTH } from "../sprites/CaveEntrance";
+import { treeTypes } from "../objectTypes";
 
 export const MAP_SIZE = 10000;
 
@@ -31,16 +32,24 @@ export default class extends Phaser.State {
     this.load.image("axe-icon", "assets/axe.png");
     this.load.image("pickaxe-icon", "assets/pickaxe.png");
     this.load.image("inventory-icon", "assets/inventory.png");
-    this.load.image("tree00", "assets/trees/RE_00.png");
-    this.load.image("stone01", "assets/stones/SM_001.png");
     this.load.image("ground", "assets/ground.png");
     this.load.image("ground-dark", "assets/ground-dark.png");
     this.load.image("cave-entrance", "assets/cave-entrance.png");
+
     this.load.atlasJSONHash(
       "player",
       "assets/player.png",
       "assets/player.json"
     );
+
+    for (let i = 0; i < 13; i++) {
+      const id = zeroPad(i);
+      this.load.image("tree" + id, `assets/trees/RE_${id}.png`);
+    }
+    for (let i = 1; i < 14; i++) {
+      const id = zeroPad(i);
+      this.load.image("stone" + id, `assets/stones/SM_0${id}.png`);
+    }
 
     this.generateMap();
   }
@@ -134,12 +143,17 @@ export default class extends Phaser.State {
   generateTrees() {
     this.game.trees = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 100000))
       .fill()
-      .map(() => ({
-        x: Phaser.Math.between(0, MAP_SIZE),
-        y: Phaser.Math.between(0, MAP_SIZE),
-        asset: "tree00",
-        body: 50,
-        logs: Phaser.Math.between(50, 150),
-      }));
+      .map(() => {
+        const treeType =
+          treeTypes[Phaser.Math.between(0, treeTypes.length - 1)];
+
+        return {
+          x: Phaser.Math.between(0, MAP_SIZE),
+          y: Phaser.Math.between(0, MAP_SIZE),
+          asset: treeType.asset,
+          body: treeType.body,
+          logs: Phaser.Math.between(treeType.body, treeType.body * 3),
+        };
+      });
   }
 }

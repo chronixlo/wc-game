@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Player from "../sprites/Player";
 import Stone from "../sprites/Stone";
+import { zeroPad } from "../utils";
 
 const DAY_LENGTH = 120;
 const HOUR_LENGTH = DAY_LENGTH / 24;
@@ -334,5 +335,3 @@ export default class Game extends Phaser.State {
     this[name + "UpgradeStoneText"] = axeUpgradeStoneText;
   }
 }
-
-const zeroPad = (v) => (v < 10 ? "0" + v : v);
