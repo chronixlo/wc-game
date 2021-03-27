@@ -21,10 +21,12 @@ export default class Outdoors extends Game {
 
     this.addCaves();
     this.addStones();
+    this.addWalls();
     this.addPlayer(
       this.game.cave ? CaveEntrance.nextTo(this.game.cave.entrance) : null
     );
     this.addTrees();
+    this.addWallPlacer();
 
     this.game.cave = null;
 

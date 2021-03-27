@@ -35,6 +35,7 @@ export default class extends Phaser.State {
     this.load.image("ground", "assets/ground.png");
     this.load.image("ground-dark", "assets/ground-dark.png");
     this.load.image("cave-entrance", "assets/cave-entrance.png");
+    this.load.image("wall", "assets/wall.png");
 
     this.load.atlasJSONHash(
       "player",
@@ -59,6 +60,7 @@ export default class extends Phaser.State {
   }
 
   generateMap() {
+    this.game.walls = [];
     this.initPlayer();
     this.generateCaves();
     this.generateStones();
@@ -68,7 +70,7 @@ export default class extends Phaser.State {
   initPlayer() {
     this.game.player = {
       resources: {
-        logs: 0,
+        logs: 100,
         stones: 0,
         iron: 0,
         gems: 0,

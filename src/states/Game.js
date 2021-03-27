@@ -1,11 +1,14 @@
 import Phaser from "phaser";
 import Player from "../sprites/Player";
 import Stone from "../sprites/Stone";
+import Wall from "../sprites/Wall";
 import { zeroPad } from "../utils";
 
 const DAY_LENGTH = 120;
 const HOUR_LENGTH = DAY_LENGTH / 24;
 const MIN_LENGTH = HOUR_LENGTH / 60;
+
+const NINETY_DEG = Math.PI / 2;
 
 export default class Game extends Phaser.State {
   init() {}
@@ -13,9 +16,12 @@ export default class Game extends Phaser.State {
 
   create() {
     this.game.physics.startSystem(Phaser.Physics.P2JS);
+
+    this.input.keyboard.onPressCallback = this.onKeyPress.bind(this);
   }
 
   update() {
+    this.updateWallPlacer();
     this.handleInput();
 
     this.stoneText.setText(this.game.player.resources.stones);
@@ -26,12 +32,48 @@ export default class Game extends Phaser.State {
     this.updateDayCycle();
   }
 
+  onKeyPress(k) {
+    const key = k.toLowerCase();
+
+    if (key === "q") {
+      if (this.game.state.current !== "Outdoors") {
+        return;
+      }
+      this.wallPlacer.visible = !this.wallPlacer.visible;
+      this.player.clearTargets();
+    } else if (key === "b") {
+      this.inventory.visible = !this.inventory.visible;
+    }
+  }
+
+  updateWallPlacer() {
+    if (!this.wallPlacer || !this.wallPlacer.visible) {
+      return;
+    }
+    const worldX = this.input.mousePointer.worldX;
+    const worldY = this.input.mousePointer.worldY;
+
+    const rotation = Phaser.Math.angleBetweenPoints(
+      new Phaser.Point(this.player.body.x, this.player.body.y),
+      new Phaser.Point(worldX, worldY)
+    );
+
+    this.wallPlacer.rotation = rotation + NINETY_DEG;
+    this.wallPlacer.x = worldX;
+    this.wallPlacer.y = worldY;
+  }
+
   handleInput() {
     if (this.inventory.visible) {
       return;
     }
     const pointer = this.game.input.activePointer;
     if (pointer.isDown) {
+      if (this.wallPlacer && this.wallPlacer.visible) {
+        this.placeWall();
+        return;
+      }
+
       if (this.beforeMove) {
         const stop = this.beforeMove(pointer);
         if (stop) {
@@ -56,6 +98,36 @@ export default class Game extends Phaser.State {
         )
       );
     }
+  }
+
+  placeWall() {
+    this.wallPlacer.visible = false;
+
+    if (this.game.player.resources.logs < 10) {
+      return;
+    }
+
+    const w = {
+      x: this.wallPlacer.x,
+      y: this.wallPlacer.y,
+      rotation: this.wallPlacer.rotation,
+    };
+    this.game.walls.push(w);
+
+    const wall = new Wall({
+      game: this.game,
+      x: w.x,
+      y: w.y,
+      asset: "wall",
+    });
+
+    this.game.physics.p2.enable(wall);
+    wall.body.setRectangleFromSprite(wall);
+    wall.body.rotation = w.rotation;
+    wall.body.static = true;
+    this.walls.add(wall);
+
+    this.game.player.resources.logs -= 10;
   }
 
   initDayCycle() {
@@ -85,6 +157,37 @@ export default class Game extends Phaser.State {
 
       this.dayCycleOverlay.alpha = alpha * 0.5;
     }
+  }
+
+  addWallPlacer() {
+    this.wallPlacer = new Wall({
+      game: this.game,
+      x: 2500,
+      y: 2500,
+      asset: "wall",
+    });
+    this.game.add.existing(this.wallPlacer);
+    this.wallPlacer.visible = false;
+  }
+
+  addWalls() {
+    this.walls = this.game.add.group();
+
+    this.game.walls.forEach((w) => {
+      const wall = new Wall({
+        game: this.game,
+        x: w.x,
+        y: w.y,
+        asset: "wall",
+      });
+
+      this.game.physics.p2.enable(wall);
+      wall.body.setRectangleFromSprite(wall);
+      wall.body.rotation = w.rotation;
+      wall.body.static = true;
+      this.walls.add(wall);
+    });
+    this.game.add.existing(this.walls);
   }
 
   addPlayer(coords) {

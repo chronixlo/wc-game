@@ -172,6 +172,12 @@ export default class Player extends Phaser.Sprite {
     this.destination = point;
   }
 
+  clearTargets() {
+    this.destinationResource = null;
+    this.targetResource = null;
+    this.destination = null;
+  }
+
   upgradePickaxe() {
     if (
       this.game.player.resources.logs >= this.game.player.pickaxeTier * 10 &&
