@@ -43,6 +43,12 @@ export default class extends Phaser.State {
       "assets/player.json"
     );
 
+    this.load.atlasJSONHash(
+      "zombie",
+      "assets/zombie.png",
+      "assets/zombie.json"
+    );
+
     for (let i = 0; i < 13; i++) {
       const id = zeroPad(i);
       this.load.image("tree" + id, `assets/trees/RE_${id}.png`);
@@ -61,6 +67,7 @@ export default class extends Phaser.State {
 
   generateMap() {
     this.game.walls = [];
+    this.game.zombies = [];
     this.initPlayer();
     this.generateCaves();
     this.generateStones();

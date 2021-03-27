@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Player from "../sprites/Player";
 import Stone from "../sprites/Stone";
 import Wall from "../sprites/Wall";
+import Zombie from "../sprites/Zombie";
 import { zeroPad } from "../utils";
 
 const DAY_LENGTH = 120;
@@ -204,6 +205,24 @@ export default class Game extends Phaser.State {
     this.player.body.setCircle(30);
 
     this.game.add.existing(this.player);
+  }
+
+  addZombies() {
+    this.zombies = this.game.add.group();
+  }
+
+  spawnZombie() {
+    const zombie = new Zombie({
+      game: this.game,
+      x: Phaser.Math.between(0, this.map.width),
+      y: Phaser.Math.between(0, this.map.height),
+      asset: "zombie",
+    });
+    this.game.physics.p2.enable(zombie);
+    this.game.camera.bounds = null;
+    zombie.body.setCircle(30);
+
+    this.zombies.add(zombie);
   }
 
   addStones() {

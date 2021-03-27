@@ -22,6 +22,7 @@ export default class Outdoors extends Game {
     this.addCaves();
     this.addStones();
     this.addWalls();
+    this.addZombies();
     this.addPlayer(
       this.game.cave ? CaveEntrance.nextTo(this.game.cave.entrance) : null
     );
@@ -32,6 +33,8 @@ export default class Outdoors extends Game {
 
     this.initDayCycle();
     this.initUI();
+
+    this.spawnZombie();
 
     // tree spawner
     this.game.time.events.loop(
