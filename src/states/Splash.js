@@ -1,9 +1,9 @@
 import Phaser from "phaser";
 import { centerGameObjects, zeroPad } from "../utils";
 import { SPRITE_HEIGHT, SPRITE_WIDTH } from "../sprites/CaveEntrance";
-import { treeTypes } from "../objectTypes";
+import { treeTypes, stoneTypes } from "../objectTypes";
 
-export const MAP_SIZE = 10000;
+export const MAP_SIZE = 5000;
 
 export default class extends Phaser.State {
   init() {}
@@ -104,14 +104,19 @@ export default class extends Phaser.State {
           caveHeight - SPRITE_HEIGHT / 2
         );
 
-        const stones = new Array(Math.round((caveWidth * caveHeight) / 100000))
+        const stones = new Array(Math.round((caveWidth * caveHeight) / 30000))
           .fill()
-          .map(() => ({
-            x: Phaser.Math.between(0, caveWidth),
-            y: Phaser.Math.between(0, caveHeight),
-            asset: "stone01",
-            body: 30,
-          }));
+          .map(() => {
+            const stoneType =
+              stoneTypes[Phaser.Math.between(0, stoneTypes.length - 1)];
+
+            return {
+              x: Phaser.Math.between(0, caveWidth),
+              y: Phaser.Math.between(0, caveHeight),
+              asset: stoneType.asset,
+              body: stoneType.body,
+            };
+          });
 
         return {
           stones,
@@ -130,18 +135,23 @@ export default class extends Phaser.State {
   }
 
   generateStones() {
-    this.game.stones = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 100000))
+    this.game.stones = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 50000))
       .fill()
-      .map(() => ({
-        x: Phaser.Math.between(0, MAP_SIZE),
-        y: Phaser.Math.between(0, MAP_SIZE),
-        asset: "stone01",
-        body: 30,
-      }));
+      .map(() => {
+        const stoneType =
+          stoneTypes[Phaser.Math.between(0, stoneTypes.length - 1)];
+
+        return {
+          x: Phaser.Math.between(0, MAP_SIZE),
+          y: Phaser.Math.between(0, MAP_SIZE),
+          asset: stoneType.asset,
+          body: stoneType.body,
+        };
+      });
   }
 
   generateTrees() {
-    this.game.trees = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 100000))
+    this.game.trees = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 50000))
       .fill()
       .map(() => {
         const treeType =
