@@ -217,6 +217,7 @@ export default class Game extends Phaser.State {
       x: Phaser.Math.between(0, this.map.width),
       y: Phaser.Math.between(0, this.map.height),
       asset: "zombie",
+      player: this.player,
     });
     this.game.physics.p2.enable(zombie);
     this.game.camera.bounds = null;
