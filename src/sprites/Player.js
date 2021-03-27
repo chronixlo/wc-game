@@ -12,14 +12,6 @@ export default class Player extends Phaser.Sprite {
   constructor({ game, x, y, asset }) {
     super(game, x, y, asset);
 
-    this.logs = 0;
-    this.stones = 0;
-    this.iron = 0;
-    this.gems = 0;
-
-    this.pickaxeTier = 1;
-    this.axeTier = 1;
-
     this.destination = null;
     this.targetRotation = null;
 
@@ -77,9 +69,9 @@ export default class Player extends Phaser.Sprite {
       const roll = Math.random();
 
       if (this.targetResource instanceof Tree) {
-        const wcChance = BASE_WC_CHANCE + 0.08 * (this.axeTier - 1);
+        const wcChance = BASE_WC_CHANCE + 0.08 * (this.game.player.axeTier - 1);
         if (roll < wcChance) {
-          this.logs++;
+          this.game.player.resources.logs++;
           this.targetResource.logs--;
 
           if (this.targetResource.logs < 1) {
@@ -88,15 +80,16 @@ export default class Player extends Phaser.Sprite {
           }
         }
       } else if (this.targetResource instanceof Stone) {
-        const miningChance = BASE_MINING_CHANCE + 0.08 * (this.pickaxeTier - 1);
+        const miningChance =
+          BASE_MINING_CHANCE + 0.08 * (this.game.player.pickaxeTier - 1);
         if (roll < miningChance) {
           if (roll < miningChance * GEM_MULTIPLIER) {
-            this.gems++;
+            this.game.player.resources.gems++;
           }
           if (roll < miningChance * IRON_MULTIPLIER) {
-            this.iron++;
+            this.game.player.resources.iron++;
           }
-          this.stones++;
+          this.game.player.resources.stones++;
         }
       }
 
@@ -181,20 +174,23 @@ export default class Player extends Phaser.Sprite {
 
   upgradePickaxe() {
     if (
-      this.logs >= this.pickaxeTier * 10 &&
-      this.stones >= this.pickaxeTier * 20
+      this.game.player.resources.logs >= this.game.player.pickaxeTier * 10 &&
+      this.game.player.resources.stones >= this.game.player.pickaxeTier * 20
     ) {
-      this.logs -= this.pickaxeTier * 10;
-      this.stones -= this.pickaxeTier * 20;
-      this.pickaxeTier += 1;
+      this.game.player.resources.logs -= this.game.player.pickaxeTier * 10;
+      this.game.player.resources.stones -= this.game.player.pickaxeTier * 20;
+      this.game.player.pickaxeTier += 1;
     }
   }
 
   upgradeAxe() {
-    if (this.logs >= this.axeTier * 10 && this.stones >= this.axeTier * 20) {
-      this.logs -= this.axeTier * 10;
-      this.stones -= this.axeTier * 20;
-      this.axeTier += 1;
+    if (
+      this.game.player.resources.logs >= this.game.player.axeTier * 10 &&
+      this.game.player.resources.stones >= this.game.player.axeTier * 20
+    ) {
+      this.game.player.resources.logs -= this.game.player.axeTier * 10;
+      this.game.player.resources.stones -= this.game.player.axeTier * 20;
+      this.game.player.axeTier += 1;
     }
   }
 }

@@ -17,10 +17,10 @@ export default class Game extends Phaser.State {
   update() {
     this.handleInput();
 
-    this.stoneText.setText(this.player.stones);
-    this.logText.setText(this.player.logs);
-    this.gemText.setText(this.player.gems);
-    this.ironText.setText(this.player.iron);
+    this.stoneText.setText(this.game.player.resources.stones);
+    this.logText.setText(this.game.player.resources.logs);
+    this.gemText.setText(this.game.player.resources.gems);
+    this.ironText.setText(this.game.player.resources.iron);
 
     this.updateDayCycle();
   }
@@ -178,7 +178,7 @@ export default class Game extends Phaser.State {
     this.inventoryBg.endFill();
     this.inventoryBg.alpha = 0.5;
     this.inventory.add(this.inventoryBg);
-    // this.inventory.visible = false;
+    this.inventory.visible = false;
 
     // axe
     this.addInventoryItem(
@@ -188,9 +188,9 @@ export default class Game extends Phaser.State {
       margin,
       () => {
         this.player.upgradeAxe();
-        this.axeText.setText("Tier " + this.player.axeTier);
-        this.axeUpgradeLogText.setText(this.player.axeTier * 10);
-        this.axeUpgradeStoneText.setText(this.player.axeTier * 20);
+        this.axeText.setText("Tier " + this.game.player.axeTier);
+        this.axeUpgradeLogText.setText(this.game.player.axeTier * 10);
+        this.axeUpgradeStoneText.setText(this.game.player.axeTier * 20);
       },
       0
     );
@@ -202,10 +202,10 @@ export default class Game extends Phaser.State {
       iconSize,
       margin,
       () => {
-        this.player.upgradeAxe();
-        this.pickaxeText.setText("Tier " + this.player.pickaxeTier);
-        this.pickaxeUpgradeLogText.setText(this.player.pickaxeTier * 10);
-        this.pickaxeUpgradeStoneText.setText(this.player.pickaxeTier * 20);
+        this.player.upgradePickaxe();
+        this.pickaxeText.setText("Tier " + this.game.player.pickaxeTier);
+        this.pickaxeUpgradeLogText.setText(this.game.player.pickaxeTier * 10);
+        this.pickaxeUpgradeStoneText.setText(this.game.player.pickaxeTier * 20);
       },
       1
     );
@@ -261,7 +261,7 @@ export default class Game extends Phaser.State {
       this.game,
       this.inventoryX + size + margin * 2 + 5,
       this.inventoryY + size * idx * 2 + margin * nth + 15,
-      "Tier " + this.player.axeTier,
+      "Tier " + this.game.player[name + "Tier"],
       {
         font: "20px monospace",
         fill: "#ffee44",
@@ -300,7 +300,7 @@ export default class Game extends Phaser.State {
       this.game,
       this.inventoryX + 100 + 20 + 5,
       this.inventoryY + size + size * idx * 2 + margin * nth + 15,
-      this.player[name + "Tier"] * 10,
+      this.game.player[name + "Tier"] * 10,
       {
         font: "16px monospace",
         fill: "#ffee44",
@@ -323,7 +323,7 @@ export default class Game extends Phaser.State {
       this.game,
       this.inventoryX + 100 + 20 + 40 + 20 + 5,
       this.inventoryY + size + size * idx * 2 + margin * nth + 15,
-      this.player[name + "Tier"] * 20,
+      this.game.player[name + "Tier"] * 20,
       {
         font: "16px monospace",
         fill: "#ffee44",

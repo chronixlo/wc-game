@@ -50,9 +50,23 @@ export default class extends Phaser.State {
   }
 
   generateMap() {
+    this.initPlayer();
     this.generateCaves();
     this.generateStones();
     this.generateTrees();
+  }
+
+  initPlayer() {
+    this.game.player = {
+      resources: {
+        logs: 0,
+        stones: 0,
+        iron: 0,
+        gems: 0,
+      },
+      pickaxeTier: 1,
+      axeTier: 1,
+    };
   }
 
   generateCaves() {
