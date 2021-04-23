@@ -5,7 +5,7 @@ import Player from "../sprites/Player";
 import Stone from "../sprites/Stone";
 import Wall from "../sprites/Wall";
 import Zombie from "../sprites/Zombie";
-import { zeroPad } from "../utils";
+import { getUpgradeCost, zeroPad } from "../utils";
 
 const DAY_LENGTH = 120;
 const HOUR_LENGTH = DAY_LENGTH / 24;
@@ -295,7 +295,7 @@ export default class Game extends Phaser.State {
       this.inventory.visible = !this.inventory.visible;
     }, this);
 
-    const inventoryWidth = 300;
+    const inventoryWidth = 400;
     const inventoryHeight = 300;
     const inventoryX = this.game.width / 2 - inventoryWidth / 2;
     const inventoryY = this.game.height / 2 - inventoryHeight / 2;
@@ -327,9 +327,12 @@ export default class Game extends Phaser.State {
       margin,
       () => {
         this.player.upgradeAxe();
+        const upgradeCost = getUpgradeCost(this.game.player.axeTier);
         this.axeText.setText("Tier " + this.game.player.axeTier);
-        this.axeUpgradeLogText.setText(this.game.player.axeTier * 10);
-        this.axeUpgradeStoneText.setText(this.game.player.axeTier * 20);
+        this.axeUpgradeLogsText.setText(upgradeCost.logs);
+        this.axeUpgradeStonesText.setText(upgradeCost.stones);
+        this.axeUpgradeIronText.setText(upgradeCost.iron);
+        this.axeUpgradeGemsText.setText(upgradeCost.gems);
       },
       0
     );
@@ -342,9 +345,12 @@ export default class Game extends Phaser.State {
       margin,
       () => {
         this.player.upgradePickaxe();
+        const upgradeCost = getUpgradeCost(this.game.player.pickaxeTier);
         this.pickaxeText.setText("Tier " + this.game.player.pickaxeTier);
-        this.pickaxeUpgradeLogText.setText(this.game.player.pickaxeTier * 10);
-        this.pickaxeUpgradeStoneText.setText(this.game.player.pickaxeTier * 20);
+        this.pickaxeUpgradeLogsText.setText(upgradeCost.logs);
+        this.pickaxeUpgradeStonesText.setText(upgradeCost.stones);
+        this.pickaxeUpgradeIronText.setText(upgradeCost.iron);
+        this.pickaxeUpgradeGemsText.setText(upgradeCost.gems);
       },
       1
     );
@@ -356,7 +362,7 @@ export default class Game extends Phaser.State {
       "End game",
       {
         font: "20px monospace",
-        fill: CLICKABLE_TEXT_COLOR,
+        fill: "#ff0000",
         align: "center",
       }
     );
@@ -405,6 +411,8 @@ export default class Game extends Phaser.State {
   }
 
   addInventoryItem(asset, name, size, margin, onInputDown, idx) {
+    const upgradeCost = getUpgradeCost(this.game.player[name + "Tier"]);
+
     const nth = idx + 1;
     const icon = new Phaser.Image(
       this.game,
@@ -445,50 +453,62 @@ export default class Game extends Phaser.State {
     upgradeText.events.onInputDown.add(onInputDown, this);
     this[name + "UpgradeText"] = upgradeText;
 
-    const axeUpgradeLogIcon = new Phaser.Image(
-      this.game,
+    // logs
+    this.addUpgradeCost(
+      "log-icon",
+      name,
+      "Logs",
+      20,
       this.inventoryX + 100,
       this.inventoryY + size + size * idx * 2 + margin * nth + 15,
-      "log-icon"
+      upgradeCost.logs
     );
-    axeUpgradeLogIcon.width = axeUpgradeLogIcon.height = 20;
-    this.inventory.add(axeUpgradeLogIcon);
 
-    const axeUpgradeLogText = new Phaser.Text(
-      this.game,
-      this.inventoryX + 100 + 20 + 5,
+    // stones
+    this.addUpgradeCost(
+      "stone-icon",
+      name,
+      "Stones",
+      20,
+      this.inventoryX + 100 + 60,
       this.inventoryY + size + size * idx * 2 + margin * nth + 15,
-      this.game.player[name + "Tier"] * 10,
-      {
-        font: "16px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
+      upgradeCost.stones
     );
-    this.inventory.add(axeUpgradeLogText);
-    this[name + "UpgradeLogText"] = axeUpgradeLogText;
 
-    const axeUpgradeStoneIcon = new Phaser.Image(
-      this.game,
-      this.inventoryX + 100 + 20 + 40,
+    // iron
+    this.addUpgradeCost(
+      "iron-icon",
+      name,
+      "Iron",
+      20,
+      this.inventoryX + 100 + 120,
       this.inventoryY + size + size * idx * 2 + margin * nth + 15,
-      "stone-icon"
+      upgradeCost.iron
     );
-    axeUpgradeStoneIcon.width = axeUpgradeStoneIcon.height = 20;
-    this.inventory.add(axeUpgradeStoneIcon);
 
-    const axeUpgradeStoneText = new Phaser.Text(
-      this.game,
-      this.inventoryX + 100 + 20 + 40 + 20 + 5,
+    // gems
+    this.addUpgradeCost(
+      "gem-icon",
+      name,
+      "Gems",
+      20,
+      this.inventoryX + 100 + 180,
       this.inventoryY + size + size * idx * 2 + margin * nth + 15,
-      this.game.player[name + "Tier"] * 20,
-      {
-        font: "16px monospace",
-        fill: "#ffee44",
-        align: "center",
-      }
+      upgradeCost.gems
     );
-    this.inventory.add(axeUpgradeStoneText);
-    this[name + "UpgradeStoneText"] = axeUpgradeStoneText;
+  }
+
+  addUpgradeCost(asset, tool, resource, size, x, y, value) {
+    const icon = new Phaser.Image(this.game, x, y, asset);
+    icon.width = icon.height = size;
+    this.inventory.add(icon);
+
+    const text = new Phaser.Text(this.game, x + 20 + 5, y, value, {
+      font: "16px monospace",
+      fill: "#ffee44",
+      align: "center",
+    });
+    this.inventory.add(text);
+    this[tool + "Upgrade" + resource + "Text"] = text;
   }
 }

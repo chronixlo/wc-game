@@ -5,3 +5,12 @@ export const centerGameObjects = (objects) => {
 };
 
 export const zeroPad = (v) => (v < 10 ? "0" + v : v);
+
+export const getUpgradeCost = (tier) => {
+  return {
+    logs: tier * 10,
+    stones: tier * 20,
+    iron: Math.floor(tier * 0.3) * 10,
+    gems: Math.floor(tier * 0.2) * 5,
+  };
+};

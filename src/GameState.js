@@ -19,10 +19,10 @@ class GameState {
   initPlayer() {
     this.game.player = {
       resources: {
-        logs: 100,
-        stones: 0,
-        iron: 0,
-        gems: 0,
+        logs: 1010,
+        stones: 1110,
+        iron: 110,
+        gems: 220,
       },
       pickaxeTier: 1,
       axeTier: 1,

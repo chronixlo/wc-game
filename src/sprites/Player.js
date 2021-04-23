@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { getUpgradeCost } from "../utils";
 import Stone from "./Stone";
 import Tree from "./Tree";
 
@@ -179,23 +180,37 @@ export default class Player extends Phaser.Sprite {
   }
 
   upgradePickaxe() {
+    const upgradeCost = getUpgradeCost(this.game.player.pickaxeTier);
+    const { logs, stones, iron, gems } = this.game.player.resources;
+
     if (
-      this.game.player.resources.logs >= this.game.player.pickaxeTier * 10 &&
-      this.game.player.resources.stones >= this.game.player.pickaxeTier * 20
+      logs >= upgradeCost.logs &&
+      stones >= upgradeCost.stones &&
+      iron >= upgradeCost.iron &&
+      gems >= upgradeCost.gems
     ) {
-      this.game.player.resources.logs -= this.game.player.pickaxeTier * 10;
-      this.game.player.resources.stones -= this.game.player.pickaxeTier * 20;
+      this.game.player.resources.logs -= upgradeCost.logs;
+      this.game.player.resources.stones -= upgradeCost.stones;
+      this.game.player.resources.iron -= upgradeCost.iron;
+      this.game.player.resources.gems -= upgradeCost.gems;
       this.game.player.pickaxeTier += 1;
     }
   }
 
   upgradeAxe() {
+    const upgradeCost = getUpgradeCost(this.game.player.axeTier);
+    const { logs, stones, iron, gems } = this.game.player.resources;
+
     if (
-      this.game.player.resources.logs >= this.game.player.axeTier * 10 &&
-      this.game.player.resources.stones >= this.game.player.axeTier * 20
+      logs >= upgradeCost.logs &&
+      stones >= upgradeCost.stones &&
+      iron >= upgradeCost.iron &&
+      gems >= upgradeCost.gems
     ) {
-      this.game.player.resources.logs -= this.game.player.axeTier * 10;
-      this.game.player.resources.stones -= this.game.player.axeTier * 20;
+      this.game.player.resources.logs -= upgradeCost.logs;
+      this.game.player.resources.stones -= upgradeCost.stones;
+      this.game.player.resources.iron -= upgradeCost.iron;
+      this.game.player.resources.gems -= upgradeCost.gems;
       this.game.player.axeTier += 1;
     }
   }
