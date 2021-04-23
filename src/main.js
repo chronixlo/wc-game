@@ -6,6 +6,7 @@ import BootState from "./states/Boot";
 import SplashState from "./states/Splash";
 import OutdoorsState from "./states/Outdoors";
 import CaveState from "./states/Cave";
+import GameOverState from "./states/GameOver";
 
 import config from "./config";
 
@@ -27,6 +28,7 @@ class Game extends Phaser.Game {
     this.state.add("Splash", SplashState, false);
     this.state.add("Outdoors", OutdoorsState, false);
     this.state.add("Cave", CaveState, false);
+    this.state.add("GameOver", GameOverState, false);
 
     // with Cordova with need to wait that the device is ready so we will call the Boot state in another file
     if (!window.cordova) {

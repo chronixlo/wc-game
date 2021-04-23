@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 
+const ATTACK_DAMAGE = 30;
+
 export default class Zombie extends Phaser.Sprite {
   constructor({ game, x, y, asset, player }) {
     super(game, x, y, asset);
@@ -57,6 +59,9 @@ export default class Zombie extends Phaser.Sprite {
       if (this.lastAttack + 3 < now) {
         this.lastAttack = now;
         this.animations.play("attack", 30, false);
+        this.game.camera.shake(0.01, 100);
+        this.game.camera.flash(0xff0000, 100, false, 0.5);
+        this.game.player.health -= ATTACK_DAMAGE;
       }
     }
 

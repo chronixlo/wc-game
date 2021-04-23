@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import CaveEntrance from "../sprites/CaveEntrance";
 import Tree from "../sprites/Tree";
 import Game from "./Game";
-import { MAP_SIZE } from "./Splash";
+import { MAP_SIZE } from "../GameState";
 
 export default class Outdoors extends Game {
   init() {}

@@ -1,4 +1,6 @@
 import Phaser from "phaser";
+import { CLICKABLE_TEXT_COLOR } from "../config";
+import GameState from "../GameState";
 import Player from "../sprites/Player";
 import Stone from "../sprites/Stone";
 import Wall from "../sprites/Wall";
@@ -22,6 +24,10 @@ export default class Game extends Phaser.State {
   }
 
   update() {
+    if (this.game.player.health <= 0) {
+      this.endGame();
+    }
+
     this.updateWallPlacer();
     this.handleInput();
 
@@ -29,8 +35,14 @@ export default class Game extends Phaser.State {
     this.logText.setText(this.game.player.resources.logs);
     this.gemText.setText(this.game.player.resources.gems);
     this.ironText.setText(this.game.player.resources.iron);
+    this.healthText.setText(this.game.player.health);
 
     this.updateDayCycle();
+  }
+
+  endGame() {
+    GameState.gameEnd = this.game.time.totalElapsedSeconds();
+    this.state.start("GameOver");
   }
 
   onKeyPress(k) {
@@ -141,7 +153,10 @@ export default class Game extends Phaser.State {
   }
 
   updateDayCycle() {
-    let elapsed = this.game.time.totalElapsedSeconds() + HOUR_LENGTH * 12;
+    let elapsed =
+      this.game.time.totalElapsedSeconds() -
+      GameState.gameStart +
+      HOUR_LENGTH * 12;
     const day = Math.floor(elapsed / DAY_LENGTH);
     elapsed -= day * DAY_LENGTH;
     const hour = Math.floor(elapsed / HOUR_LENGTH);
@@ -334,11 +349,30 @@ export default class Game extends Phaser.State {
       1
     );
 
+    const endGameText = new Phaser.Text(
+      this.game,
+      this.inventoryX + 5,
+      this.inventoryY + inventoryHeight - 30,
+      "End game",
+      {
+        font: "20px monospace",
+        fill: CLICKABLE_TEXT_COLOR,
+        align: "center",
+      }
+    );
+    endGameText.inputEnabled = true;
+    this.inventory.add(endGameText);
+    endGameText.events.onInputDown.add(() => {
+      this.endGame();
+    }, this);
+
     // hud icons
     this.logText = this.addHudIcon("log-icon", iconSize, margin, 0);
     this.stoneText = this.addHudIcon("stone-icon", iconSize, margin, 1);
     this.ironText = this.addHudIcon("iron-icon", iconSize, margin, 2);
     this.gemText = this.addHudIcon("gem-icon", iconSize, margin, 3);
+
+    this.healthText = this.addHudIcon("health-icon", iconSize, margin, 5);
   }
 
   addHudIcon(asset, size, margin, idx) {
@@ -402,7 +436,7 @@ export default class Game extends Phaser.State {
       "Upgrade",
       {
         font: "20px monospace",
-        fill: "#44eeee",
+        fill: CLICKABLE_TEXT_COLOR,
         align: "center",
       }
     );

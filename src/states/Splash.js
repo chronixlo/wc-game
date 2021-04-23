@@ -1,9 +1,6 @@
 import Phaser from "phaser";
 import { centerGameObjects, zeroPad } from "../utils";
-import { SPRITE_HEIGHT, SPRITE_WIDTH } from "../sprites/CaveEntrance";
-import { treeTypes, stoneTypes } from "../objectTypes";
-
-export const MAP_SIZE = 5000;
+import GameState from "../GameState";
 
 export default class extends Phaser.State {
   init() {}
@@ -25,6 +22,7 @@ export default class extends Phaser.State {
     //
     // load your assets
     //
+    this.load.image("health-icon", "assets/health.png");
     this.load.image("stone-icon", "assets/stone.png");
     this.load.image("iron-icon", "assets/iron.png");
     this.load.image("gem-icon", "assets/gem.png");
@@ -58,121 +56,10 @@ export default class extends Phaser.State {
       this.load.image("stone" + id, `assets/stones/SM_0${id}.png`);
     }
 
-    this.generateMap();
+    GameState.init(this.game);
   }
 
   create() {
     this.state.start("Outdoors");
-  }
-
-  generateMap() {
-    this.game.walls = [];
-    this.game.zombies = [];
-    this.initPlayer();
-    this.generateCaves();
-    this.generateStones();
-    this.generateTrees();
-  }
-
-  initPlayer() {
-    this.game.player = {
-      resources: {
-        logs: 100,
-        stones: 0,
-        iron: 0,
-        gems: 0,
-      },
-      pickaxeTier: 1,
-      axeTier: 1,
-    };
-  }
-
-  generateCaves() {
-    this.game.caves = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 1000000))
-      .fill()
-      .map(() => {
-        const entranceX = Phaser.Math.between(
-          SPRITE_WIDTH / 2,
-          MAP_SIZE - SPRITE_WIDTH / 2
-        );
-        const entranceY = Phaser.Math.between(
-          SPRITE_HEIGHT / 2,
-          MAP_SIZE - SPRITE_HEIGHT / 2
-        );
-
-        const caveWidth = Phaser.Math.between(600, 2000);
-        const caveHeight = Phaser.Math.between(600, 2000);
-
-        const exitX = Phaser.Math.between(
-          SPRITE_WIDTH / 2,
-          caveWidth - SPRITE_WIDTH / 2
-        );
-
-        const exitY = Phaser.Math.between(
-          SPRITE_HEIGHT / 2,
-          caveHeight - SPRITE_HEIGHT / 2
-        );
-
-        const stones = new Array(Math.round((caveWidth * caveHeight) / 30000))
-          .fill()
-          .map(() => {
-            const stoneType =
-              stoneTypes[Phaser.Math.between(0, stoneTypes.length - 1)];
-
-            return {
-              x: Phaser.Math.between(0, caveWidth),
-              y: Phaser.Math.between(0, caveHeight),
-              asset: stoneType.asset,
-              body: stoneType.body,
-            };
-          });
-
-        return {
-          stones,
-          width: caveWidth,
-          height: caveHeight,
-          exit: {
-            x: exitX,
-            y: exitY,
-          },
-          entrance: {
-            x: entranceX,
-            y: entranceY,
-          },
-        };
-      });
-  }
-
-  generateStones() {
-    this.game.stones = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 50000))
-      .fill()
-      .map(() => {
-        const stoneType =
-          stoneTypes[Phaser.Math.between(0, stoneTypes.length - 1)];
-
-        return {
-          x: Phaser.Math.between(0, MAP_SIZE),
-          y: Phaser.Math.between(0, MAP_SIZE),
-          asset: stoneType.asset,
-          body: stoneType.body,
-        };
-      });
-  }
-
-  generateTrees() {
-    this.game.trees = new Array(Math.round((MAP_SIZE * MAP_SIZE) / 50000))
-      .fill()
-      .map(() => {
-        const treeType =
-          treeTypes[Phaser.Math.between(0, treeTypes.length - 1)];
-
-        return {
-          x: Phaser.Math.between(0, MAP_SIZE),
-          y: Phaser.Math.between(0, MAP_SIZE),
-          asset: treeType.asset,
-          body: treeType.body,
-          logs: Phaser.Math.between(treeType.body, treeType.body * 3),
-        };
-      });
   }
 }
