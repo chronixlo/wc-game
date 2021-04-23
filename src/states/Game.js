@@ -7,6 +7,8 @@ import Wall from "../sprites/Wall";
 import Zombie from "../sprites/Zombie";
 import { getUpgradeCost, zeroPad } from "../utils";
 
+const BUILD_RANGE = 100;
+
 const DAY_LENGTH = 120;
 const HOUR_LENGTH = DAY_LENGTH / 24;
 const MIN_LENGTH = HOUR_LENGTH / 60;
@@ -71,9 +73,28 @@ export default class Game extends Phaser.State {
       new Phaser.Point(worldX, worldY)
     );
 
+    const dist = Phaser.Math.distance(
+      this.player.body.x,
+      this.player.body.y,
+      worldX,
+      worldY
+    );
+
+    if (dist > BUILD_RANGE) {
+      const delta_x = worldX - this.player.body.x;
+      const delta_y = worldY - this.player.body.y;
+      const theta_radians = Math.atan2(delta_y, delta_x);
+
+      this.wallPlacer.x =
+        this.player.body.x + BUILD_RANGE * Math.cos(theta_radians);
+      this.wallPlacer.y =
+        this.player.body.y + BUILD_RANGE * Math.sin(theta_radians);
+    } else {
+      this.wallPlacer.x = worldX;
+      this.wallPlacer.y = worldY;
+    }
+
     this.wallPlacer.rotation = rotation + NINETY_DEG;
-    this.wallPlacer.x = worldX;
-    this.wallPlacer.y = worldY;
   }
 
   handleInput() {
