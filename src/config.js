@@ -5,7 +5,7 @@ export default {
   webfonts: [],
 };
 
-export const CLICKABLE_TEXT_COLOR = "#44eeee";
+export const CLICKABLE_TEXT_COLOR = "#16cc2e";
 
 export const DAY_LENGTH = 120;
 export const HOUR_LENGTH = DAY_LENGTH / 24;
