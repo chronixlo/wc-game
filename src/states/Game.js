@@ -384,7 +384,6 @@ export default class Game extends Phaser.State {
       {
         font: "20px monospace",
         fill: "#ff0000",
-        align: "center",
       }
     );
     endGameText.inputEnabled = true;
@@ -392,6 +391,18 @@ export default class Game extends Phaser.State {
     endGameText.events.onInputDown.add(() => {
       this.endGame();
     }, this);
+
+    const versionText = new Phaser.Text(
+      this.game,
+      this.inventoryX + this.inventoryWidth - 40,
+      this.inventoryY + inventoryHeight - 10,
+      "v" + GAME_VERSION,
+      {
+        font: "10px monospace",
+        fill: "#fff",
+      }
+    );
+    this.inventory.add(versionText);
 
     // hud icons
     this.logText = this.addHudIcon("log-icon", iconSize, margin, 0);
