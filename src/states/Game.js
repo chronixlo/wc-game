@@ -149,7 +149,12 @@ export default class Game extends Phaser.State {
       y: this.wallPlacer.y,
       rotation: this.wallPlacer.rotation,
     };
-    this.game.walls.push(w);
+
+    if (this.game.state.current === "Outdoors") {
+      this.game.walls.push(w);
+    } else {
+      this.game.cave.walls.push(w);
+    }
 
     const wall = new Wall({
       game: this.game,
@@ -208,7 +213,15 @@ export default class Game extends Phaser.State {
   addWalls() {
     this.walls = this.game.add.group();
 
-    this.game.walls.forEach((w) => {
+    let walls;
+
+    if (this.game.state.current === "Outdoors") {
+      walls = this.game.walls;
+    } else {
+      walls = this.game.cave.walls;
+    }
+
+    walls.forEach((w) => {
       const wall = new Wall({
         game: this.game,
         x: w.x,

@@ -72,6 +72,7 @@ class GameState {
 
         return {
           stones,
+          walls: [],
           width: caveWidth,
           height: caveHeight,
           exit: {
