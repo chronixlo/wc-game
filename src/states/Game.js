@@ -51,9 +51,6 @@ export default class Game extends Phaser.State {
     const key = k.toLowerCase();
 
     if (key === "q") {
-      if (this.game.state.current !== "Outdoors") {
-        return;
-      }
       this.wallPlacer.visible = !this.wallPlacer.visible;
       this.player.clearTargets();
     } else if (key === "b") {
@@ -308,16 +305,16 @@ export default class Game extends Phaser.State {
     this.dayText.fixedToCamera = true;
 
     const margin = 8;
-    const inventoryIconSize = 64;
+    const buttonSize = 64;
     const iconSize = 48;
 
     const inventoryIcon = new Phaser.Image(
       this.game,
-      this.game.width - inventoryIconSize - margin,
-      this.game.height - inventoryIconSize - margin,
+      this.game.width - buttonSize - margin,
+      this.game.height - buttonSize - margin,
       "inventory-icon"
     );
-    inventoryIcon.width = inventoryIcon.height = inventoryIconSize;
+    inventoryIcon.width = inventoryIcon.height = buttonSize;
     inventoryIcon.fixedToCamera = true;
     inventoryIcon.inputEnabled = true;
     this.game.add.existing(inventoryIcon);
@@ -325,6 +322,48 @@ export default class Game extends Phaser.State {
     inventoryIcon.events.onInputDown.add(() => {
       this.inventory.visible = !this.inventory.visible;
     }, this);
+
+    const inventoryText = new Phaser.Text(
+      this.game,
+      this.game.width - 20 - margin,
+      this.game.height - 20 - margin,
+      "B",
+      {
+        font: "20px monospace",
+        fill: "#ffee44",
+      }
+    );
+    inventoryText.fixedToCamera = true;
+    this.game.add.existing(inventoryText);
+
+    const wallIcon = new Phaser.Image(
+      this.game,
+      this.game.width - buttonSize - margin,
+      this.game.height - buttonSize - buttonSize - margin - margin * 2,
+      "wall-icon"
+    );
+    wallIcon.width = wallIcon.height = buttonSize;
+    wallIcon.fixedToCamera = true;
+    wallIcon.inputEnabled = true;
+    this.game.add.existing(wallIcon);
+
+    wallIcon.events.onInputDown.add(() => {
+      this.wallPlacer.visible = !this.wallPlacer.visible;
+      this.player.clearTargets();
+    }, this);
+
+    const wallText = new Phaser.Text(
+      this.game,
+      this.game.width - 20 - margin,
+      this.game.height - 20 - buttonSize - margin - margin * 2,
+      "Q",
+      {
+        font: "20px monospace",
+        fill: "#ffee44",
+      }
+    );
+    wallText.fixedToCamera = true;
+    this.game.add.existing(wallText);
 
     const inventoryWidth = 400;
     const inventoryHeight = 300;

@@ -34,6 +34,7 @@ export default class extends Phaser.State {
     this.load.image("ground-dark", "assets/ground-dark.png");
     this.load.image("cave-entrance", "assets/cave-entrance.png");
     this.load.image("wall", "assets/wall.png");
+    this.load.image("wall-icon", "assets/wall-icon.png");
 
     this.load.atlasJSONHash(
       "player",

@@ -27,8 +27,10 @@ export default class Cave extends Game {
 
     this.addExits();
     this.addStones();
+    this.addWalls();
     this.addZombies();
     this.addPlayer(CaveEntrance.nextTo(this.game.cave.exit));
+    this.addWallPlacer();
 
     this.initDayCycle();
     this.initUI();
