@@ -37,24 +37,33 @@ export default class Outdoors extends Game {
     this.spawnZombie();
 
     // tree spawner
-    this.game.time.events.loop(
-      Phaser.Timer.SECOND * 60,
-      () => {
-        const tree = new Tree({
-          game: this.game,
-          x: Phaser.Math.between(0, this.map.width),
-          y: Phaser.Math.between(0, this.map.height),
-          asset: "tree00",
-          logs: Phaser.Math.between(50, 150),
-        });
+    // this.game.time.events.loop(
+    //   Phaser.Timer.SECOND * 60,
+    //   () => {
+    //     const tree = new Tree({
+    //       game: this.game,
+    //       x: Phaser.Math.between(0, this.map.width),
+    //       y: Phaser.Math.between(0, this.map.height),
+    //       asset: "tree00",
+    //       logs: Phaser.Math.between(50, 150),
+    //     });
 
-        this.game.physics.p2.enable(tree);
-        tree.body.setCircle(50);
-        tree.body.static = true;
-        this.trees.add(tree);
-      },
-      this
-    );
+    //     this.game.physics.p2.enable(tree);
+    //     tree.body.setCircle(50);
+    //     tree.body.static = true;
+    //     this.trees.add(tree);
+    //   },
+    //   this
+    // );
+
+    // zombie spawner
+    // this.game.time.events.loop(
+    //   Phaser.Timer.SECOND * 60,
+    //   () => {
+    //     this.spawnZombie();
+    //   },
+    //   this
+    // );
   }
 
   update() {

@@ -125,6 +125,16 @@ export default class Game extends Phaser.State {
         return;
       }
 
+      const walls = this.game.physics.p2.hitTest(
+        new Phaser.Point(pointer.worldX, pointer.worldY),
+        this.walls.children
+      );
+
+      if (walls.length) {
+        this.player.harvestResource(walls[0].parent.sprite);
+        return;
+      }
+
       this.player.moveTo(
         new Phaser.Point(
           this.game.camera.x + pointer.clientX,

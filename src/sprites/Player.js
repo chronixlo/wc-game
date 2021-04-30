@@ -2,12 +2,14 @@ import Phaser from "phaser";
 import { getUpgradeCost } from "../utils";
 import Stone from "./Stone";
 import Tree from "./Tree";
+import Wall from "./Wall";
 
 const HARVEST_INTERVAL = 0.2;
 const BASE_WC_CHANCE = 0.2;
 const BASE_MINING_CHANCE = 0.2;
 const IRON_MULTIPLIER = 0.2;
 const GEM_MULTIPLIER = 0.03;
+const WALL_BREAK_CHANCE = 0.1;
 
 export default class Player extends Phaser.Sprite {
   constructor({ game, x, y, asset }) {
@@ -91,6 +93,13 @@ export default class Player extends Phaser.Sprite {
             this.game.player.resources.iron++;
           }
           this.game.player.resources.stones++;
+        }
+      } else if (this.targetResource instanceof Wall) {
+        const breakChance = WALL_BREAK_CHANCE;
+        if (roll < breakChance) {
+          this.targetResource.destroy();
+          this.targetResource = null;
+          this.animations.play("idle", 30, true);
         }
       }
 
