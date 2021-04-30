@@ -1,6 +1,7 @@
 import Phaser from "phaser";
-import { CLICKABLE_TEXT_COLOR } from "../config";
+import { CLICKABLE_TEXT_COLOR, HOUR_LENGTH } from "../config";
 import GameState from "../GameState";
+import { getElapsed } from "../utils";
 
 export default class GameOver extends Phaser.State {
   init() {}
@@ -10,11 +11,22 @@ export default class GameOver extends Phaser.State {
 
     const text = this.add.text(
       this.game.width / 2,
-      this.game.height / 2,
+      this.game.height / 2 - 50,
       "Game over",
-      { font: "20px monospace", fill: "#dddddd", align: "center" }
+      { font: "28px monospace", fill: "#dddddd", align: "center" }
     );
     text.anchor.setTo(0.5, 0.5);
+
+    const seconds = GameState.gameEnd - GameState.gameStart + HOUR_LENGTH * 12;
+    const elapsed = getElapsed(seconds);
+
+    const elapsedText = this.add.text(
+      this.game.width / 2,
+      this.game.height / 2,
+      "You survived till " + elapsed.string,
+      { font: "20px monospace", fill: "#fff", align: "center" }
+    );
+    elapsedText.anchor.setTo(0.5, 0.5);
 
     const newGameText = this.add.text(
       this.game.width / 2,

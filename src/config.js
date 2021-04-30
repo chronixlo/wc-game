@@ -6,3 +6,7 @@ export default {
 };
 
 export const CLICKABLE_TEXT_COLOR = "#44eeee";
+
+export const DAY_LENGTH = 120;
+export const HOUR_LENGTH = DAY_LENGTH / 24;
+export const MIN_LENGTH = HOUR_LENGTH / 60;

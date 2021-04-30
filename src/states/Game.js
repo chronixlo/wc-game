@@ -1,17 +1,13 @@
 import Phaser from "phaser";
-import { CLICKABLE_TEXT_COLOR } from "../config";
+import { CLICKABLE_TEXT_COLOR, HOUR_LENGTH } from "../config";
 import GameState from "../GameState";
 import Player from "../sprites/Player";
 import Stone from "../sprites/Stone";
 import Wall from "../sprites/Wall";
 import Zombie from "../sprites/Zombie";
-import { getUpgradeCost, zeroPad } from "../utils";
+import { getElapsed, getUpgradeCost } from "../utils";
 
 const BUILD_RANGE = 100;
-
-const DAY_LENGTH = 120;
-const HOUR_LENGTH = DAY_LENGTH / 24;
-const MIN_LENGTH = HOUR_LENGTH / 60;
 
 const NINETY_DEG = Math.PI / 2;
 
@@ -181,23 +177,18 @@ export default class Game extends Phaser.State {
   }
 
   updateDayCycle() {
-    let elapsed =
+    const seconds =
       this.game.time.totalElapsedSeconds() -
       GameState.gameStart +
       HOUR_LENGTH * 12;
-    const day = Math.floor(elapsed / DAY_LENGTH);
-    elapsed -= day * DAY_LENGTH;
-    const hour = Math.floor(elapsed / HOUR_LENGTH);
-    elapsed -= hour * HOUR_LENGTH;
-    this.dayText.setText(
-      `Day ${day + 1}, ${zeroPad(hour)}:${zeroPad(
-        Math.floor(elapsed / MIN_LENGTH)
-      )}`
-    );
+
+    const elapsed = getElapsed(seconds);
+
+    this.dayText.setText(elapsed.string);
 
     if (this.game.state.current === "Outdoors") {
-      const hourDec = hour + elapsed / MIN_LENGTH / 60;
-      const alpha = hourDec === 0 ? 1 : Math.abs((hourDec - 12) % 12) / 12;
+      const alpha =
+        elapsed.hourDec === 0 ? 1 : Math.abs((elapsed.hourDec - 12) % 12) / 12;
 
       this.dayCycleOverlay.alpha = alpha * 0.5;
     }
