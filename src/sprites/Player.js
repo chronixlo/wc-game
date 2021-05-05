@@ -97,6 +97,18 @@ export default class Player extends Phaser.Sprite {
       } else if (this.targetResource instanceof Wall) {
         const breakChance = WALL_BREAK_CHANCE;
         if (roll < breakChance) {
+          if (this.game.state.current === "Outdoors") {
+            const idx = this.game.walls.findIndex(
+              (w) => w.id === this.targetResource.id
+            );
+            this.game.walls.splice(idx, 1);
+          } else {
+            const idx = this.game.cave.walls.findIndex(
+              (w) => w.id === this.targetResource.id
+            );
+            this.game.cave.walls.splice(idx, 1);
+          }
+
           this.targetResource.destroy();
           this.targetResource = null;
           this.animations.play("idle", 30, true);

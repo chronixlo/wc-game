@@ -5,7 +5,7 @@ import Player from "../sprites/Player";
 import Stone from "../sprites/Stone";
 import Wall from "../sprites/Wall";
 import Zombie from "../sprites/Zombie";
-import { getElapsed, getUpgradeCost } from "../utils";
+import { getElapsed, getID, getUpgradeCost } from "../utils";
 
 const BUILD_RANGE = 100;
 
@@ -144,10 +144,13 @@ export default class Game extends Phaser.State {
       return;
     }
 
+    const id = getID();
+
     const w = {
       x: this.wallPlacer.x,
       y: this.wallPlacer.y,
       rotation: this.wallPlacer.rotation,
+      id,
     };
 
     if (this.game.state.current === "Outdoors") {
@@ -161,6 +164,7 @@ export default class Game extends Phaser.State {
       x: w.x,
       y: w.y,
       asset: "wall",
+      id,
     });
 
     this.game.physics.p2.enable(wall);
@@ -227,6 +231,7 @@ export default class Game extends Phaser.State {
         x: w.x,
         y: w.y,
         asset: "wall",
+        id: w.id,
       });
 
       this.game.physics.p2.enable(wall);

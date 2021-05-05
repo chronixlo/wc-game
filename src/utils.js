@@ -1,5 +1,7 @@
 import { DAY_LENGTH, HOUR_LENGTH, MIN_LENGTH } from "./config";
 
+let ID = 1;
+
 export const centerGameObjects = (objects) => {
   objects.forEach(function (object) {
     object.anchor.setTo(0.5);
@@ -34,3 +36,5 @@ export const getElapsed = (seconds) => {
     string,
   };
 };
+
+export const getID = () => ID++;
