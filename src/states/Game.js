@@ -16,9 +16,15 @@ export default class Game extends Phaser.State {
   preload() {}
 
   create() {
+    this.skipInput = false;
+
     this.game.physics.startSystem(Phaser.Physics.P2JS);
 
     this.input.keyboard.onPressCallback = this.onKeyPress.bind(this);
+
+    this.input.onUp.add(() => {
+      this.skipInput = false;
+    }, this);
   }
 
   update() {
@@ -52,6 +58,13 @@ export default class Game extends Phaser.State {
     } else if (key === "b") {
       this.inventory.visible = !this.inventory.visible;
     }
+  }
+
+  toggleWallPlacer() {
+    this.wallPlacer.visible = !this.wallPlacer.visible;
+    this.player.clearTargets();
+
+    this.skipInput = true;
   }
 
   updateWallPlacer() {
@@ -91,6 +104,9 @@ export default class Game extends Phaser.State {
   }
 
   handleInput() {
+    if (this.skipInput) {
+      return;
+    }
     if (this.inventory.visible) {
       return;
     }
@@ -143,6 +159,8 @@ export default class Game extends Phaser.State {
     if (this.game.player.resources.logs < 10) {
       return;
     }
+
+    this.skipInput = true;
 
     const id = getID();
 
@@ -306,6 +324,15 @@ export default class Game extends Phaser.State {
     this.game.add.existing(this.stones);
   }
 
+  toggleInventory() {
+    this.inventory.visible = !this.inventory.visible;
+
+    // skip inputs when closing
+    if (!this.inventory.visible) {
+      this.skipInput = true;
+    }
+  }
+
   initUI() {
     this.dayText = this.game.add.text(8, 8, "", {
       font: "20px monospace",
@@ -329,7 +356,7 @@ export default class Game extends Phaser.State {
     this.game.add.existing(inventoryIcon);
 
     inventoryIcon.events.onInputDown.add(() => {
-      this.inventory.visible = !this.inventory.visible;
+      this.toggleInventory();
     }, this);
 
     const inventoryText = new Phaser.Text(
@@ -357,8 +384,7 @@ export default class Game extends Phaser.State {
     this.game.add.existing(wallIcon);
 
     wallIcon.events.onInputDown.add(() => {
-      this.wallPlacer.visible = !this.wallPlacer.visible;
-      this.player.clearTargets();
+      this.toggleWallPlacer();
     }, this);
 
     const wallText = new Phaser.Text(

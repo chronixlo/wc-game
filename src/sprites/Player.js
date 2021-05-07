@@ -198,6 +198,7 @@ export default class Player extends Phaser.Sprite {
     this.destinationResource = null;
     this.targetResource = null;
     this.destination = null;
+    this.animations.play("idle", 30, true);
   }
 
   upgradePickaxe() {
