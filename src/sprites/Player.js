@@ -43,7 +43,7 @@ export default class Player extends Phaser.Sprite {
         ".png"
       )
     );
-    this.animations.play("idle", 30, true);
+    this.playIdleAnim();
   }
 
   update() {
@@ -79,7 +79,7 @@ export default class Player extends Phaser.Sprite {
 
           if (this.targetResource.logs < 1) {
             this.targetResource = null;
-            this.animations.play("idle", 30, true);
+            this.playIdleAnim();
           }
         }
       } else if (this.targetResource instanceof Stone) {
@@ -111,7 +111,7 @@ export default class Player extends Phaser.Sprite {
 
           this.targetResource.destroy();
           this.targetResource = null;
-          this.animations.play("idle", 30, true);
+          this.playIdleAnim();
         }
       }
 
@@ -133,7 +133,7 @@ export default class Player extends Phaser.Sprite {
           this.game.time.totalElapsedSeconds() + HARVEST_INTERVAL;
         this.destination = null;
         this.destinationResource = null;
-        this.animations.play("attack", 30, true);
+        this.playAttackAnim();
         return;
       }
     }
@@ -163,11 +163,11 @@ export default class Player extends Phaser.Sprite {
       this.body.velocity.x = moveX;
       this.body.velocity.y = moveY;
 
-      this.animations.play("move", 30, true);
+      this.playMoveAnim();
     } else {
       this.destination = null;
 
-      this.animations.play("idle", 30, true);
+      this.playIdleAnim();
     }
 
     this.targetRotation = Phaser.Math.angleBetweenPoints(
@@ -198,7 +198,7 @@ export default class Player extends Phaser.Sprite {
     this.destinationResource = null;
     this.targetResource = null;
     this.destination = null;
-    this.animations.play("idle", 30, true);
+    this.playIdleAnim();
   }
 
   upgradePickaxe() {
@@ -235,5 +235,17 @@ export default class Player extends Phaser.Sprite {
       this.game.player.resources.gems -= upgradeCost.gems;
       this.game.player.axeTier += 1;
     }
+  }
+
+  playAttackAnim() {
+    this.animations.play("attack", 30, true);
+  }
+
+  playIdleAnim() {
+    this.animations.play("idle", 30, true);
+  }
+
+  playMoveAnim() {
+    this.animations.play("move", 30, true);
   }
 }

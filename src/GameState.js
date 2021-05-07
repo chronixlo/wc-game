@@ -1,7 +1,7 @@
 import { SPRITE_HEIGHT, SPRITE_WIDTH } from "./sprites/CaveEntrance";
 import { treeTypes, stoneTypes } from "./objectTypes";
 
-export const MAP_SIZE = 5000;
+export const MAP_SIZE = 2000;
 
 class GameState {
   init(game) {
