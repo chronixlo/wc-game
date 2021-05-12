@@ -38,3 +38,11 @@ export const getElapsed = (seconds) => {
 };
 
 export const getID = () => ID++;
+
+export const saveStorage = (key, value) => {
+  localStorage.setItem(key, JSON.stringify(value));
+};
+
+export const loadStorage = (key) => {
+  return JSON.parse(localStorage.getItem(key));
+};

@@ -1,11 +1,22 @@
 import { SPRITE_HEIGHT, SPRITE_WIDTH } from "./sprites/CaveEntrance";
 import { treeTypes, stoneTypes } from "./objectTypes";
+import { loadStorage, saveStorage } from "./utils";
 
 export const MAP_SIZE = 2000;
 
 class GameState {
-  init(game) {
+  init(game, startNew) {
     this.game = game;
+
+    // load saved game if exists
+    if (!startNew) {
+      const savedState = loadStorage("state");
+      if (savedState) {
+        this.loadState(savedState);
+        return;
+      }
+    }
+
     this.game.walls = [];
     this.game.zombies = [];
     this.initPlayer();
@@ -14,6 +25,35 @@ class GameState {
     this.generateTrees();
     this.gameStart = this.game.time.totalElapsedSeconds();
     this.gameEnd = null;
+  }
+
+  saveState() {
+    const state = {
+      walls: this.game.walls,
+      zombies: this.game.zombies,
+      player: Object.assign(this.game.player, {
+        x: this.game.playerSprite.x,
+        y: this.game.playerSprite.y,
+      }),
+      caves: this.game.caves,
+      stones: this.game.stones,
+      trees: this.game.trees,
+      gameStart: this.gameStart,
+      gameEnd: this.gameEnd,
+    };
+
+    saveStorage("state", state);
+  }
+
+  loadState(state) {
+    this.game.walls = state.walls;
+    this.game.zombies = state.zombies;
+    this.game.player = state.player;
+    this.game.caves = state.caves;
+    this.game.stones = state.stones;
+    this.game.trees = state.trees;
+    this.gameStart = state.gameStart;
+    this.gameEnd = state.gameEnd;
   }
 
   initPlayer() {
@@ -27,6 +67,8 @@ class GameState {
       pickaxeTier: 1,
       axeTier: 1,
       health: 100,
+      x: MAP_SIZE / 2,
+      y: MAP_SIZE / 2,
     };
   }
 

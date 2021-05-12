@@ -38,7 +38,7 @@ export default class GameOver extends Phaser.State {
     newGameText.inputEnabled = true;
 
     newGameText.events.onInputDown.add(() => {
-      GameState.init(this.game);
+      GameState.init(this.game, true);
       this.state.start("Outdoors");
     }, this);
   }

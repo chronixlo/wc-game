@@ -29,6 +29,14 @@ export default class Game extends Phaser.State {
         this.placeWall();
       }
     }, this);
+
+    this.game.time.events.loop(
+      Phaser.Timer.SECOND * 5,
+      () => {
+        GameState.saveState();
+      },
+      this
+    );
   }
 
   update() {
@@ -266,10 +274,10 @@ export default class Game extends Phaser.State {
   }
 
   addPlayer(coords) {
-    this.player = new Player({
+    this.player = this.game.playerSprite = new Player({
       game: this.game,
-      x: coords ? coords.x : this.map.width / 2,
-      y: coords ? coords.y : this.map.height / 2,
+      x: coords ? coords.x : this.game.player.x,
+      y: coords ? coords.y : this.game.player.y,
       asset: "player",
     });
     this.game.physics.p2.enable(this.player);
