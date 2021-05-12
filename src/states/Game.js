@@ -231,6 +231,7 @@ export default class Game extends Phaser.State {
       y: 2500,
       asset: "wall",
     });
+    this.wallPlacer.tint = 0xffaaaa;
     this.game.add.existing(this.wallPlacer);
     this.wallPlacer.visible = false;
   }
