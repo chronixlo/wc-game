@@ -24,6 +24,10 @@ export default class Game extends Phaser.State {
 
     this.input.onUp.add(() => {
       this.skipInput = false;
+
+      if (this.wallPlaced) {
+        this.placeWall();
+      }
     }, this);
   }
 
@@ -71,8 +75,8 @@ export default class Game extends Phaser.State {
     if (!this.wallPlacer || !this.wallPlacer.visible) {
       return;
     }
-    const worldX = this.input.mousePointer.worldX;
-    const worldY = this.input.mousePointer.worldY;
+    const worldX = this.input.activePointer.worldX;
+    const worldY = this.input.activePointer.worldY;
 
     const rotation = Phaser.Math.angleBetweenPoints(
       new Phaser.Point(this.player.body.x, this.player.body.y),
@@ -113,7 +117,7 @@ export default class Game extends Phaser.State {
     const pointer = this.game.input.activePointer;
     if (pointer.isDown) {
       if (this.wallPlacer && this.wallPlacer.visible) {
-        this.placeWall();
+        this.wallPlaced = true;
         return;
       }
 
@@ -154,13 +158,12 @@ export default class Game extends Phaser.State {
   }
 
   placeWall() {
+    this.wallPlaced = false;
     this.wallPlacer.visible = false;
 
     if (this.game.player.resources.logs < 10) {
       return;
     }
-
-    this.skipInput = true;
 
     const id = getID();
 
